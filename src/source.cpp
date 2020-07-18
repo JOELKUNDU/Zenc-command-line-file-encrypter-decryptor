@@ -53,7 +53,7 @@ struct config {
             cout.clear();
             exit(0);
         }
-        fpath = argv[2]; //The File to be encrypted       
+        fpath = argv[2]; //The File to be encrypted   
         mode = argv[4];//En/Decryption mode
         bool accept = false;//check valid mode
         for (unsigned int i = 0; i < ::modes.size(); i++) {
@@ -218,12 +218,43 @@ protected:
         return eraseSubStr(path, ext);
     }
     string genEncTitle(string path) {
-        string encpath = "";
-        return encpath;
+        fs::path f(path);
+        string filename = f.filename().string();
+        string encname = "";
+        string password = "syIQlmMZZZUBLamI16u0lQXZuSmlVHGoctpdU44tvM9iwEDOANEO358cOh4RJLTqe8AJvEtPzvDqZ7b6UHPLY3oRgoMjiN4jvnfPwU2CqMi07OLlnNxPP3P2FBW3vrjI";
+        string iv = randomgeniv(password);
+        //hdkf
+        SecByteBlock key(AES::MAX_KEYLENGTH + AES::BLOCKSIZE);
+        HKDF<SHA256> hkdf;
+        hkdf.DeriveKey(key, sizeof(key), (const unsigned char*)password.data(), password.size(),
+            (const unsigned char*)iv.data(), iv.size(), NULL, 0);
+
+        GCM<AES, GCM_2K_Tables>::Encryption e;
+        e.SetKeyWithIV(key, AES::MAX_KEYLENGTH, key + AES::MAX_KEYLENGTH);
+        StringSource f1(filename, true,
+            new AuthenticatedEncryptionFilter(e,
+                new StringSink(encname)));
+        return encname + ".Zenc";
     }
     string genDecTitle(string path) {
-        string encpath = "";
-        return encpath;
+        fs::path f(path);
+        string filename = f.filename().string();
+        filename = eraseSubStr(filename, ".Zenc");
+        string decname = "";
+        string password = "syIQlmMZZZUBLamI16u0lQXZuSmlVHGoctpdU44tvM9iwEDOANEO358cOh4RJLTqe8AJvEtPzvDqZ7b6UHPLY3oRgoMjiN4jvnfPwU2CqMi07OLlnNxPP3P2FBW3vrjI";
+        string iv = randomgeniv(password);
+        //hdkf
+        SecByteBlock key(AES::MAX_KEYLENGTH + AES::BLOCKSIZE);
+        HKDF<SHA256> hkdf;
+        hkdf.DeriveKey(key, sizeof(key), (const unsigned char*)password.data(), password.size(),
+            (const unsigned char*)iv.data(), iv.size(), NULL, 0);
+
+        GCM<AES, GCM_2K_Tables>::Decryption d;
+        d.SetKeyWithIV(key, AES::MAX_KEYLENGTH, key + AES::MAX_KEYLENGTH);
+        StringSource f2(filename, true,
+            new AuthenticatedDecryptionFilter(d,
+                new StringSink(decname)));
+        return decname;
     }
 };
 class gcm2k : commanEncryptor
@@ -449,6 +480,15 @@ private:
                     cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
                 }
             }
+            string checkpath = settings.fpath;
+            fs::path check(checkpath);
+            if (check.extension().string() != ".Zenc") {
+                cout << "Cannot Decrypt File:" << settings.fpath << endl;
+                cout << "ERROR: File not encrypted with Zenc" << endl;
+                cout << "Press ENTER to Exit ...";
+                getchar();
+                exit(EXIT_FAILURE);
+            }
             string decpath;
             if (settings.dectitle) {
                 decpath = genDecTitle(settings.fpath);
@@ -456,6 +496,7 @@ private:
             else {
                 decpath = eraseSubStr(settings.fpath, ".Zenc");
             }
+
             FileSource f(settings.fpath.c_str(), true,
                 new AuthenticatedDecryptionFilter(d,
                     new FileSink(decpath.c_str())));
@@ -651,6 +692,27 @@ private:
                 exit(EXIT_FAILURE);
             }
             for (auto& file : fs::recursive_directory_iterator(encdir)) {
+                if (file.path().extension().string() != ".Zenc") {
+                    cout << "Cannot Decrypt File:" << settings.fpath << endl;
+                    cout << "ERROR: File not encrypted with Zenc" << endl;
+                    while (true) {
+                        cout << "Continue? [y/n]\t";
+                        char ch;
+                        cin >> ch;
+                        if (ch == 'y' || ch == 'Y') {
+                            break;
+                        }
+                        else if (ch == 'n' || ch == 'N') {
+                            cout << "Press ENTER to Exit ...";
+                            getchar();
+                            exit(EXIT_FAILURE);
+                        }
+                        else {
+                            cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
+                        }
+                    }
+                    continue;
+                }
                 try {
                     string filepath = file.path().string();
                     if (settings.dectitle) {
@@ -1030,6 +1092,15 @@ private:
                     cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
                 }
             }
+            string checkpath = settings.fpath;
+            fs::path check(checkpath);
+            if (check.extension().string() != ".Zenc") {
+                cout << "Cannot Decrypt File:" << settings.fpath << endl;
+                cout << "ERROR: File not encrypted with Zenc" << endl;
+                cout << "Press ENTER to Exit ...";
+                getchar();
+                exit(EXIT_FAILURE);
+            }
             string decpath;
             if (settings.dectitle) {
                 decpath = genDecTitle(settings.fpath);
@@ -1232,6 +1303,27 @@ private:
                 exit(EXIT_FAILURE);
             }
             for (auto& file : fs::recursive_directory_iterator(encdir)) {
+                if (file.path().extension().string() != ".Zenc") {
+                    cout << "Cannot Decrypt File:" << settings.fpath << endl;
+                    cout << "ERROR: File not encrypted with Zenc" << endl;
+                    while (true) {
+                        cout << "Continue? [y/n]\t";
+                        char ch;
+                        cin >> ch;
+                        if (ch == 'y' || ch == 'Y') {
+                            break;
+                        }
+                        else if (ch == 'n' || ch == 'N') {
+                            cout << "Press ENTER to Exit ...";
+                            getchar();
+                            exit(EXIT_FAILURE);
+                        }
+                        else {
+                            cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
+                        }
+                    }
+                    continue;
+                }
                 try {
                     string filepath = file.path().string();
                     if (settings.dectitle) {
@@ -1611,6 +1703,15 @@ private:
                     cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
                 }
             }
+            string checkpath = settings.fpath;
+            fs::path check(checkpath);
+            if (check.extension().string() != ".Zenc") {
+                cout << "Cannot Decrypt File:" << settings.fpath << endl;
+                cout << "ERROR: File not encrypted with Zenc" << endl;
+                cout << "Press ENTER to Exit ...";
+                getchar();
+                exit(EXIT_FAILURE);
+            }
             string decpath;
             if (settings.dectitle) {
                 decpath = genDecTitle(settings.fpath);
@@ -1813,6 +1914,27 @@ private:
                 exit(EXIT_FAILURE);
             }
             for (auto& file : fs::recursive_directory_iterator(encdir)) {
+                if (file.path().extension().string() != ".Zenc") {
+                    cout << "Cannot Decrypt File:" << settings.fpath << endl;
+                    cout << "ERROR: File not encrypted with Zenc" << endl;
+                    while (true) {
+                        cout << "Continue? [y/n]\t";
+                        char ch;
+                        cin >> ch;
+                        if (ch == 'y' || ch == 'Y') {
+                            break;
+                        }
+                        else if (ch == 'n' || ch == 'N') {
+                            cout << "Press ENTER to Exit ...";
+                            getchar();
+                            exit(EXIT_FAILURE);
+                        }
+                        else {
+                            cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
+                        }
+                    }
+                    continue;
+                }
                 try {
                     string filepath = file.path().string();
                     if (settings.dectitle) {

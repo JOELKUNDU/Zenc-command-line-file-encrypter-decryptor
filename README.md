@@ -1,7 +1,7 @@
-### Zenc ###
+<h1>### Zenc ###</h1>
 A command line cross platform File/Folder encryptor written in c++ and based on Crypto++ library 
 
-How to use? <br>
+<h2>How to use?</h2> <br>
 Method 1: <br>
 Take the .exe given in the release folder.<br>
 Paste it somewhere on your PC.<br>
@@ -12,13 +12,13 @@ Take the source file from the src file and paste it in an IDE.<br>
 Make sure u set the c++ standard to stdc++17 and have cryptopp installed
 compile and use the exe just like before.<br>
 
-Encryption modes supported:
+<h2>Encryption modes supported:</h2>
 1.  AES-GCM with 2k tables
 2.  AES-GCM with 64k tables
 3.  AES-EAX
 (more methods will be added soon)
 
-::: Zenc HELPBOOK :::<br>
+<h2>::: Zenc HELPBOOK :::<br></h2>
 Zenc <OPTIONS/TO ENCRYPT A FILE/TO ENCRYPT A FOLDER/TO DECRYPT A FILE/TO DECRYPT A FOLDER><br>
 <br>
 $$$$ OPTIONS $$$$<br>
@@ -97,7 +97,8 @@ MODES SUPPORTED:<br>
 ADDITIONAL OPTIONS:<br>
 -t              Mention this if the file names were encrypted<br>
 <br>
-EXAMPLE COMMANDS:<br>
+
+<h3>EXAMPLE COMMANDS:<br></h3>
 1. To open the help book:<br>
     (on Windows)<br>
     .\Zenc.exe -h<br>

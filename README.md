@@ -13,10 +13,10 @@ A command line cross platform File/Folder encryptor written in c++ and based on 
         compile and use the exe just like before.<br>
 
 <h2>Encryption modes supported:</h2>
-1.  AES-GCM with 2k tables
-2.  AES-GCM with 64k tables
-3.  AES-EAX
-(more methods will be added soon)
+1.  AES-GCM with 2k tables<br>
+2.  AES-GCM with 64k tables<br>
+3.  AES-EAX<br>
+(more methods will be added soon)<br>
 
 <h2>::: Zenc HELPBOOK :::<br></h2>
 Zenc <OPTIONS/TO ENCRYPT A FILE/TO ENCRYPT A FOLDER/TO DECRYPT A FILE/TO DECRYPT A FOLDER><br>

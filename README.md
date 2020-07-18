@@ -2,13 +2,15 @@
 A command line cross platform File/Folder encryptor written in c++ and based on Crypto++ library 
 
 How to use? <br>
-Method 1: Take the .exe given in the release folder.
-          Paste it somewhere on your PC.
-          Press Shift and right-click there would be an option to open Powershell/cmd prompt
-          Refer to the sample commands given bellow.
-Method 2: Take the source file from the src file and paste it in an IDE.
-          Make sure u set the c++ standard to stdc++17 and have cryptopp installed
-          compile and use the exe just like before.
+Method 1: 
+Take the .exe given in the release folder.<br>
+Paste it somewhere on your PC.<br>
+Press Shift and right-click there would be an option to open Powershell/cmd prompt<br>
+Refer to the sample commands given bellow.<br>
+Method 2: <br>
+Take the source file from the src file and paste it in an IDE.<br>
+Make sure u set the c++ standard to stdc++17 and have cryptopp installed
+compile and use the exe just like before.<br>
 
 Encryption modes supported:
 1.  AES-GCM with 2k tables
@@ -95,28 +97,28 @@ MODES SUPPORTED:
 ADDITIONAL OPTIONS:
 -t              Mention this if the file names were encrypted
 
-EXAMPLE COMMANDS:
-1. To open the help book:
+EXAMPLE COMMANDS:<br>
+1. To open the help book:<br>
+    (on Windows)<br>
+    .\Zenc.exe -h<br>
+    .\Zenc.exe -H<br>
+    .\Zenc.exe<br>
+2. To Encrypt a file:<br>
     (on Windows)
-    .\Zenc.exe -h
-    .\Zenc.exe -H
-    .\Zenc.exe
-2. To Encrypt a file:
-    (on Windows)
-    .\Zenc.exe -e C:\test\test.txt -m gcm2k -p Password123 -t (encrypt with a passwprd)
-    .\Zenc.exe -e C:\test\test.txt -m gcm2k -p C:\test\test.zkey -t (encrypt with a keyfile)
-    .\Zenc.exe -e C:\test\test.txt -m gcm2k -np -t (generate a keyfile)
-3. To Encrypt a Directory :
-    (on Windows)
-    .\Zenc.exe -ed C:\test\ -m gcm2k -p Password123 - t (encrypt with a passwprd)
-    .\Zenc.exe -ed C:\test\ -m gcm2k -p C:\test\test.zkey -t (encrypt with a keyfile)
-    .\Zenc.exe -ed C:\test\ -m gcm2k -np -t (generate a keyfile)
-4. To Decrypt a file:
-    (on Windows)
-    .\Zenc.exe -d C:\test\test.txt -m gcm2k -p Password123 -t (decrypt with a passwprd)
-    .\Zenc.exe -d C:\test\test.txt -m gcm2k -p C:\test\test.zkey -t (decrypt with a keyfile)
-5. To Decrypt a Directory :
-    (on Windows)
-    .\Zenc.exe -dd C:\test\ -m gcm2k -p Password123 -t (decrypt with a passwprd)
-    .\Zenc.exe -dd C:\test\ -m gcm2k -p C:\test\test.zkey -t (decrypt with a keyfile)
+    .\Zenc.exe -e C:\test\test.txt -m gcm2k -p Password123 -t (encrypt with a passwprd)<br>
+    .\Zenc.exe -e C:\test\test.txt -m gcm2k -p C:\test\test.zkey -t (encrypt with a keyfile)<br>
+    .\Zenc.exe -e C:\test\test.txt -m gcm2k -np -t (generate a keyfile)<br>
+3. To Encrypt a Directory :<br>
+    (on Windows)<br>
+    .\Zenc.exe -ed C:\test\ -m gcm2k -p Password123 - t (encrypt with a passwprd)<br>
+    .\Zenc.exe -ed C:\test\ -m gcm2k -p C:\test\test.zkey -t (encrypt with a keyfile)<br>
+    .\Zenc.exe -ed C:\test\ -m gcm2k -np -t (generate a keyfile)<br>
+4. To Decrypt a file:<br>
+    (on Windows)<br>
+    .\Zenc.exe -d C:\test\test.txt -m gcm2k -p Password123 -t (decrypt with a passwprd)<br>
+    .\Zenc.exe -d C:\test\test.txt -m gcm2k -p C:\test\test.zkey -t (decrypt with a keyfile)<br>
+5. To Decrypt a Directory :<br>
+    (on Windows)<br>
+    .\Zenc.exe -dd C:\test\ -m gcm2k -p Password123 -t (decrypt with a passwprd)<br>
+    .\Zenc.exe -dd C:\test\ -m gcm2k -p C:\test\test.zkey -t (decrypt with a keyfile)<br>
   

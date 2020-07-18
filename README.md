@@ -1,16 +1,16 @@
-<h1>### Zenc ###</h1>
+<h1>Zenc </h1>
 A command line cross platform File/Folder encryptor written in c++ and based on Crypto++ library 
 
 <h2>How to use?</h2> <br>
-Method 1: <br>
-Take the .exe given in the release folder.<br>
-Paste it somewhere on your PC.<br>
-Press Shift and right-click there would be an option to open Powershell/cmd prompt<br>
-Refer to the sample commands given bellow.<br>
-Method 2: <br>
-Take the source file from the src file and paste it in an IDE.<br>
-Make sure u set the c++ standard to stdc++17 and have cryptopp installed
-compile and use the exe just like before.<br>
+<h3>Method 1:</h3> <br>
+        Take the .exe given in the release folder.<br>
+        Paste it somewhere on your PC.<br>
+        Press Shift and right-click there would be an option to open Powershell/cmd prompt<br>
+        Refer to the sample commands given bellow.<br>
+<h3>Method 2:</h3> <br>
+        Take the source file from the src file and paste it in an IDE.<br>
+        Make sure u set the c++ standard to stdc++17 and have cryptopp installed
+        compile and use the exe just like before.<br>
 
 <h2>Encryption modes supported:</h2>
 1.  AES-GCM with 2k tables
@@ -21,12 +21,12 @@ compile and use the exe just like before.<br>
 <h2>::: Zenc HELPBOOK :::<br></h2>
 Zenc <OPTIONS/TO ENCRYPT A FILE/TO ENCRYPT A FOLDER/TO DECRYPT A FILE/TO DECRYPT A FOLDER><br>
 <br>
-$$$$ OPTIONS $$$$<br>
+<h3>$$$$ OPTIONS $$$$</h3><br>
 <br>
 $ FOR HELP<br>
 - h or -H       OPEN HELPBOOK<br>
 <br>
-$$$$ FOR ENCRYPTING $$$<br>
+<h3>$$$$ FOR ENCRYPTING $$$</h3><br>
 <br>
 $ TO ENCRYPT A FILE<br>
 -e <filepath> -m <mode> -p <password/key path> / -np -<additional_options><br>
@@ -61,7 +61,7 @@ MODES SUPPORTED:<br>
 -np             If you don;t want to specify a password then a new .key file will be genrated in the same directoryADDITIONAL OPTIONS:<br>
 -t              Encrypts the name of the Files also<br>
 <br>
-$$$$ FOR DECRYPTING $$$$<br>
+<h3>$$$$ FOR DECRYPTING $$$$</h3><br>
 <br>
 <br>
 $ TO DECRYPT A FILE<br>

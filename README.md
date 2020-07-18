@@ -1,7 +1,7 @@
 ### Zenc ###
 A command line cross platform File/Folder encryptor written in c++ and based on Crypto++ library 
 
-How to use?
+How to use? <br>
 Method 1: Take the .exe given in the release folder.
           Paste it somewhere on your PC.
           Press Shift and right-click there would be an option to open Powershell/cmd prompt

@@ -19,7 +19,7 @@ A command line cross platform File/Folder encryptor written in c++ and based on 
 (more methods will be added soon)<br>
 
 <h2>::: Zenc HELPBOOK :::<br></h2>
-Zenc <OPTIONS/TO ENCRYPT A FILE/TO ENCRYPT A FOLDER/TO DECRYPT A FILE/TO DECRYPT A FOLDER><br>
+Zenc [OPTIONS/TO ENCRYPT A FILE/TO ENCRYPT A FOLDER/TO DECRYPT A FILE/TO DECRYPT A FOLDER]<br>
 <br>
 <h3>$$$$ OPTIONS $$$$</h3><br>
 <br>
@@ -29,7 +29,7 @@ $ FOR HELP<br>
 <h3>$$$$ FOR ENCRYPTING $$$</h3><br>
 <br>
 $ TO ENCRYPT A FILE<br>
--e <filepath> -m <mode> -p <password/key path> / -np -<additional_options><br>
+-e [filepath] -m [mode] -p [password/key path] / -np -[additional_options]<br>
 <br>
 -e              To encrypt a file.<br>
 <filepath>      Path to the file to be encrypted<br>
@@ -46,7 +46,7 @@ MODES SUPPORTED:<br>
 <br>
 <br>
 $ TO ENCRYPT A DIR<br>
--ed <folderpath> -m <mode> -p <password/key path> / -np -<additional_options><br>
+-ed [folderpath] -m [mode] -p [password/key path] / -np -[additional_options]<br>
 <br>
 -ed             To encrypt a dir.<br>
 <folderpath>    Path to the file to be encrypted<br>

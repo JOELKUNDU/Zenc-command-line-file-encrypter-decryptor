@@ -2,7 +2,7 @@
 A command line cross platform File/Folder encryptor written in c++ and based on Crypto++ library 
 
 How to use? <br>
-Method 1: 
+Method 1: <br>
 Take the .exe given in the release folder.<br>
 Paste it somewhere on your PC.<br>
 Press Shift and right-click there would be an option to open Powershell/cmd prompt<br>

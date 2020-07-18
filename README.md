@@ -99,7 +99,7 @@ ADDITIONAL OPTIONS:<br>
 <br>
 
 <h3>EXAMPLE COMMANDS:<br></h3>
-1. To open the help book:<br>
+       1. To open the help book:<br>
        (on Windows)<br>
 
        .\Zenc.exe -h

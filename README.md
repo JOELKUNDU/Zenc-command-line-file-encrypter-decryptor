@@ -1,4 +1,4 @@
-<h1>Zenc </h1>
+<h1>Zenc - command line file encrypter / decryptor</h1>
 A command line cross platform File/Folder encryptor written in c++ and based on Crypto++ library 
 
 <h2>How to use?</h2> <br>

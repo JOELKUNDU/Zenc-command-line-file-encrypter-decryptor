@@ -100,17 +100,16 @@ ADDITIONAL OPTIONS:<br>
 
 <h3>EXAMPLE COMMANDS:<br></h3>
 1. To open the help book:<br>
-   (on Windows)<br>
+       (on Windows)<br>
 
-   .\Zenc.exe -h<br>
-   .\Zenc.exe -H<br>
-   .\Zenc.exe<br>
+       .\Zenc.exe -h<br>
+       .\Zenc.exe -H<br>
+       .\Zenc.exe<br>
 2. To Encrypt a file:<br>
-    (on Windows)
-
-   .\Zenc.exe -e C:\test\test.txt -m gcm2k -p Password123 -t (encrypt with a passwprd)<br>
-   .\Zenc.exe -e C:\test\test.txt -m gcm2k -p C:\test\test.zkey -t (encrypt with a keyfile)<br>
-   .\Zenc.exe -e C:\test\test.txt -m gcm2k -np -t (generate a keyfile)<br>
+       (on Windows)
+       .\Zenc.exe -e C:\test\test.txt -m gcm2k -p Password123 -t (encrypt with a passwprd)<br>
+       .\Zenc.exe -e C:\test\test.txt -m gcm2k -p C:\test\test.zkey -t (encrypt with a keyfile)<br>
+       .\Zenc.exe -e C:\test\test.txt -m gcm2k -np -t (generate a keyfile)<br>
 
 3. To Encrypt a Directory :<br>
     (on Windows)<br>

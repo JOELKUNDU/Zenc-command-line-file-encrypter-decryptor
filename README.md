@@ -102,10 +102,10 @@ ADDITIONAL OPTIONS:<br>
 1. To open the help book:<br>
        (on Windows)<br>
 
-              .\Zenc.exe -h
-              .\Zenc.exe -H
-              .\Zenc.exe
-       
+       .\Zenc.exe -h
+       .\Zenc.exe -H
+       .\Zenc.exe
+
 2. To Encrypt a file:<br>
        (on Windows)
       

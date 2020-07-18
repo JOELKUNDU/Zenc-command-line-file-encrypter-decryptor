@@ -18,85 +18,85 @@ Encryption modes supported:
 3.  AES-EAX
 (more methods will be added soon)
 
-::: Zenc HELPBOOK :::
-Zenc <OPTIONS/TO ENCRYPT A FILE/TO ENCRYPT A FOLDER/TO DECRYPT A FILE/TO DECRYPT A FOLDER>
-
-$$$$ OPTIONS $$$$
-
-$ FOR HELP
-- h or -H       OPEN HELPBOOK
-
-$$$$ FOR ENCRYPTING $$$
-
-$ TO ENCRYPT A FILE
--e <filepath> -m <mode> -p <password/key path> / -np -<additional_options>
-
--e              To encrypt a file.
-<filepath>      Path to the file to be encrypted
--m              Choose the mode of encrytion
-
-MODES SUPPORTED:
-        1. gcm2k        GCM with 2K tables
-        2. gcm64k       GCM with 64k tables
-        3. eax          EAX mode
-
--p              If you want to enter the <password> or the <path> to an existing .key file
--np             If you don;t want to specify a password then a new .key file will be genrated in the same directoryADDITIONAL OPTIONS:
--t              Encrypts the name of the Files also
-
-
-$ TO ENCRYPT A DIR
--ed <folderpath> -m <mode> -p <password/key path> / -np -<additional_options>
-
--ed             To encrypt a dir.
-<folderpath>    Path to the file to be encrypted
--m              Choose the mode of encrytion
-
-MODES SUPPORTED:
-        1. gcm2k        GCM with 2K tables
-        2. gcm64k       GCM with 64k tables
-        3. eax          EAX mode
-
--p              If you want to enter the <password> or the <path> to an existing .key file
--np             If you don;t want to specify a password then a new .key file will be genrated in the same directoryADDITIONAL OPTIONS:
--t              Encrypts the name of the Files also
-
-$$$$ FOR DECRYPTING $$$$
-
-
-$ TO DECRYPT A FILE
--d <filepath> -m <mode> -p <password/key path> / -np -<additional_options>
-
--d              To decrypt a file.
-<filepath>      Path to the file to be decrypted
+::: Zenc HELPBOOK :::<br>
+Zenc <OPTIONS/TO ENCRYPT A FILE/TO ENCRYPT A FOLDER/TO DECRYPT A FILE/TO DECRYPT A FOLDER><br>
+<br>
+$$$$ OPTIONS $$$$<br>
+<br>
+$ FOR HELP<br>
+- h or -H       OPEN HELPBOOK<br>
+<br>
+$$$$ FOR ENCRYPTING $$$<br>
+<br>
+$ TO ENCRYPT A FILE<br>
+-e <filepath> -m <mode> -p <password/key path> / -np -<additional_options><br>
+<br>
+-e              To encrypt a file.<br>
+<filepath>      Path to the file to be encrypted<br>
+-m              Choose the mode of encrytion<br>
+<br>
+MODES SUPPORTED:<br>
+        1. gcm2k        GCM with 2K tables<br>
+        2. gcm64k       GCM with 64k tables<br>
+        3. eax          EAX mode<br>
+<br>
+-p              If you want to enter the <password> or the <path> to an existing .key file<br>
+-np             If you don;t want to specify a password then a new .key file will be genrated in the same directoryADDITIONAL OPTIONS:<br>
+-t              Encrypts the name of the Files also<br>
+<br>
+<br>
+$ TO ENCRYPT A DIR<br>
+-ed <folderpath> -m <mode> -p <password/key path> / -np -<additional_options><br>
+<br>
+-ed             To encrypt a dir.<br>
+<folderpath>    Path to the file to be encrypted<br>
+-m              Choose the mode of encrytion<br>
+<br>
+MODES SUPPORTED:<br>
+        1. gcm2k        GCM with 2K tables<br>
+        2. gcm64k       GCM with 64k tables<br>
+        3. eax          EAX mode<br>
+<br>
+-p              If you want to enter the <password> or the <path> to an existing .key file<br>
+-np             If you don;t want to specify a password then a new .key file will be genrated in the same directoryADDITIONAL OPTIONS:<br>
+-t              Encrypts the name of the Files also<br>
+<br>
+$$$$ FOR DECRYPTING $$$$<br>
+<br>
+<br>
+$ TO DECRYPT A FILE<br>
+-d <filepath> -m <mode> -p <password/key path> / -np -<additional_options><br>
+<br>
+-d              To decrypt a file.<br>
+<filepath>      Path to the file to be decrypted<br>
 -m              Choose the mode of encrytion used
+<br>
+MODES SUPPORTED:<br>
+        1. gcm2k        GCM with 2K tables<br>
+        2. gcm64k       GCM with 64k tables<br>
+        3. eax          EAX mode<br>
+<br>
+-p              Password used to encrypt the file if no password was used while encrypting then give the path to the .key file generated at the point of encryption<br>
+ADDITIONAL OPTIONS:<br>
+-t              Mention this if the file names were encrypted<br>
+<br>
+<br>
+$ TO DECRYPT A FOLDER<br>
+-dd <folderpath> -m <mode> -p <password/key path> / -np -<additional_options><br>
+<br>
+-dd             To decrypt a dir.<br>
+<folderpath>    Path to the file to be decrypted<br>
+-m              Choose the mode of encrytion used<br>
+<br>
+MODES SUPPORTED:<br>
+        1. gcm2k        GCM with 2K tables<br>
+        2. gcm64k       GCM with 64k tables<br>
+        3. eax          EAX mode<br>
 
-MODES SUPPORTED:
-        1. gcm2k        GCM with 2K tables
-        2. gcm64k       GCM with 64k tables
-        3. eax          EAX mode
-
--p              Password used to encrypt the file if no password was used while encrypting then give the path to the .key file generated at the point of encryption
-ADDITIONAL OPTIONS:
--t              Mention this if the file names were encrypted
-
-
-$ TO DECRYPT A FOLDER
--dd <folderpath> -m <mode> -p <password/key path> / -np -<additional_options>
-
--dd             To decrypt a dir.
-<folderpath>    Path to the file to be decrypted
--m              Choose the mode of encrytion used
-
-MODES SUPPORTED:
-        1. gcm2k        GCM with 2K tables
-        2. gcm64k       GCM with 64k tables
-        3. eax          EAX mode
-
--p              Password used to encrypt the file if no password was used while encrypting then give the path to the .key file generated at the point of encryption
-ADDITIONAL OPTIONS:
--t              Mention this if the file names were encrypted
-
+-p              Password used to encrypt the file if no password was used while encrypting then give the path to the .key file generated at the point of encryption<br>
+ADDITIONAL OPTIONS:<br>
+-t              Mention this if the file names were encrypted<br>
+<br>
 EXAMPLE COMMANDS:<br>
 1. To open the help book:<br>
     (on Windows)<br>

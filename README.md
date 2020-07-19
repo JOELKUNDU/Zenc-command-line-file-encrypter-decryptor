@@ -10,8 +10,9 @@ A command line cross platform File/Folder encryptor written in c++ and based on 
        
 <h3>Method 2:</h3> 
        - Take the source file from the src file and paste it in an IDE.<br>
-       - Make sure u set the c++ standard to stdc++17 and have cryptopp installed
-       - compile and use the exe just like before.<br>
+       - Make sure u set the c++ standard to stdc++17 and have cryptopp installed<Br>
+       - compile and use the output. (refer bellow for exampple commands)<br>
+       - If you change the output name from Zenc then replace Zenc from the commands given bellow with your output name.<br>
        <b>(Preferably use this)</b>
 <h2>Encryption modes supported:</h2>
 1.  AES-GCM with 2k tables<br>
@@ -98,6 +99,9 @@ MODES SUPPORTED:<br>
 ADDITIONAL OPTIONS:<br>
 -t              Mention this if the file names were encrypted<br>
 <br>
+
+<h3>NOTE:</h3>
+1. To delete files run it on an elevated terminal else Permission Denied error will occur. 
 
 <h3>EXAMPLE COMMANDS:<br></h3>
        1. To open the help book:<br>

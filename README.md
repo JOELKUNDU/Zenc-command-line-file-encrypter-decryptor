@@ -18,15 +18,15 @@ A command line cross platform File/Folder encryptor written in c++ and based on 
 3.  AES-EAX<br>
 (more methods will be added soon)<br>
 
-<h2>::: Zenc HELPBOOK :::<br></h2>
+<h2>::: Zenc HELPBOOK :::</h2>
 Zenc [OPTIONS/TO ENCRYPT A FILE/TO ENCRYPT A FOLDER/TO DECRYPT A FILE/TO DECRYPT A FOLDER]<br>
 <br>
-<h3>$$$$ OPTIONS $$$$</h3><br>
+<h3>$$$$ OPTIONS $$$$</h3>
 <br>
 $ FOR HELP<br>
 - h or -H       OPEN HELPBOOK<br>
 <br>
-<h3>$$$$ FOR ENCRYPTING $$$</h3><br>
+<h3>$$$$ FOR ENCRYPTING $$$</h3>
 <br>
 $ TO ENCRYPT A FILE<br>
 -e [filepath] -m [mode] -p [password/key path] / -np -[additional_options]<br>
@@ -61,7 +61,7 @@ MODES SUPPORTED:<br>
 -np             If you don;t want to specify a password then a new .key file will be genrated in the same directoryADDITIONAL OPTIONS:<br>
 -t              Encrypts the name of the Files also<br>
 <br>
-<h3>$$$$ FOR DECRYPTING $$$$</h3><br>
+<h3>$$$$ FOR DECRYPTING $$$$</h3>
 <br>
 <br>
 $ TO DECRYPT A FILE<br>

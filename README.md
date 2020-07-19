@@ -131,4 +131,6 @@ ADDITIONAL OPTIONS:<br>
     
        .\Zenc.exe -dd C:\test\ -m gcm2k -p Password123 -t (decrypt with a passwprd)
        .\Zenc.exe -dd C:\test\ -m gcm2k -p C:\test\test.zkey -t (decrypt with a keyfile)
+       
+NOTE: change .\Zenc.exe according to your needs.       
 

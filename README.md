@@ -12,7 +12,7 @@ A command line cross platform File/Folder encryptor written in c++ and based on 
        - Take the source file from the src file and paste it in an IDE.<br>
        - Make sure u set the c++ standard to stdc++17 and have cryptopp installed
        - compile and use the exe just like before.<br>
-       (Preferably use this)
+       ###(Preferably use this)###
 <h2>Encryption modes supported:</h2>
 1.  AES-GCM with 2k tables<br>
 2.  AES-GCM with 64k tables<br>

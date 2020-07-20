@@ -1,3 +1,9 @@
+20/07/2020 -  Added AES - CBC mode
+              Add option to generate passwords instead of .zkey files
+              fixed: zkey file being created without extension
+              Features Still to be added:
+                1. AES-ECB, AES-CFB,AES-OFB,AES-CTR,AES-CCM
+                2. Add option for user defined output
 19/07/2020 -  Completed Source Code Added
               Supported Modes (AES-GCM2k , AES-GCM64k, AES-EAX)
               Bugs removed:
@@ -5,7 +11,7 @@
                 2. Not encrypting / decrypting filenames
                 3. Error while encrypting / decrypting folder when the file is not encrypted before hand
               Features Planned:
-                1. Add AES-CCM, AES-CBC.
+                1. Add AES-CBC.
                 2. Add option to have a password generated instead of a keyfile
                 3. Add option to specify output path
 18/07/2020 -  Added Partial Source Code and Exe

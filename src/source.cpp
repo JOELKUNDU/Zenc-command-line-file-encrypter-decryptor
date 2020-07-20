@@ -1,4 +1,12 @@
-#define _CRT_SECURE_NO_WARNINGS
+/*/////////////////////////////////////////////////////////////////////////////////
+
+This code is placed in the public domain by -Joel Kundu
+It is distributed under GNU GPLv3 and you would have recieved a copy of it when 
+you cloned the repository
+
+/////////////////////////////////////////////////////////////////////////////////*/
+
+#define _CRT_SECURE_NO_WARNINGS //for Visualstudio remove it if not using Visual studio as an IDE
 
 //HEADERS USED
 #include <iostream>
@@ -10,6 +18,7 @@
 #include <cryptopp/aes.h>
 #include <cryptopp/gcm.h>
 #include <cryptopp/eax.h>
+#include <cryptopp/cbcmac.h>
 #include <cryptopp/sha.h>
 #include <cryptopp/hkdf.h>
 #include <cryptopp/osrng.h>
@@ -24,7 +33,7 @@ using namespace CryptoPP;
 
 //CLASSES AND STRUCTURES
 //config structure (stores all the settings given by the user)
-vector<string> modes = { "gcm2k","gcm64k","eax" };
+vector<string> modes = { "gcm2k","gcm64k","eax","cbc" };
 struct config {
     string option;
     string fpath = "";
@@ -35,6 +44,23 @@ struct config {
     bool genpass = false;
     bool enctitle = false;
     bool dectitle = false;
+    bool generatePassword = false;
+    string randomgenpass(string password, int len) {
+        string out = "";
+        uint64_t rseed = 0;
+        for (unsigned int i = 0; i < password.size(); i++) {
+            int a = (int)password.at(i);
+            rseed += (uint64_t)a;
+        }
+        random_device a;
+        minstd_rand d(rseed % UINT_MAX);
+        string charset = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890*=";
+        for (int i = 0; i < len; i++) {
+            int c = (d()+a()) % charset.size();
+            out += charset.at(c);
+        }
+        return out;
+    }
     void parseinput(int argc, char** argv) {
         //Chech the command structure and populate the config struct 
         if (argv[3][1] != 'm' && !(argv[5][1] == 'p' || (argv[5][1] == 'n' && argv[5][2] == 'p') || argv[5][1] == 't' || argv[5][1] == 'g')) {
@@ -129,6 +155,10 @@ struct config {
                         if (argv[i][1] == 't') {// encrypt with encrypted titles
                             enctitle = true;
                         }
+                        else if (argv[i][1] == 'g') {
+                            genpass = false;
+                            generatePassword = true;
+                        }
                         else {//error in input
                             cout << "Incorrect additional option used" << endl;
                             cout << "ERROR IN IMPUT CHECK THE HELPBOOK USING Zenc -h or Zenc -H" << endl;
@@ -174,6 +204,14 @@ struct config {
         else if (genpass || (!password && !keyfile))cout << "Password: A new one will be generated and displayed after encryption" << endl;
         if (enctitle)cout << "Encrypt File Names: TRUE (File names will be encrypted)" << endl;
         if (dectitle)cout << "Decrypt File Names: TRUE (File names will be decrypted) " << endl;
+        if (generatePassword) {
+            cout << "Enter Password Length: ";
+            int len;
+            cin >> len;
+            password = true;
+            kpathPass = randomgenpass(fpath, len);
+            cout << "Password Generated :" << kpathPass << endl;
+        }
         cout << endl;
     }
 };
@@ -216,7 +254,7 @@ protected:
     string getKeypath(string path) {
         fs::path p(path);
         string ext = p.extension().string();
-        return eraseSubStr(path, ext);
+        return eraseSubStr(path, ext) + ".zkey";
     }
     string genEncTitle(string path) {
         try {
@@ -294,7 +332,6 @@ protected:
             exit(EXIT_FAILURE);
         }
     }
-
 };
 class gcm2k : commanEncryptor
 {
@@ -431,6 +468,11 @@ private:
         }
     }
     void encryptFile() {
+        fs::path checkext(settings.fpath);
+        if (checkext.extension().string() == ".Zenc") {
+            cout << "File Already Encrypted Using Zenc" << endl;
+            exit(EXIT_SUCCESS);
+        }
         try {
             cout << "Encrypting : " << settings.fpath << endl;
             while (true) {
@@ -613,89 +655,97 @@ private:
                 exit(EXIT_FAILURE);
             }
             for (auto& file : fs::recursive_directory_iterator(encdir)) {
-                try {
-                    string filepath = file.path().string();
-                    cout << "Encrypting : " << filepath << endl;
-                    if (settings.enctitle) {
-                        encpath = genEncTitle(filepath);
-                    }
-                    else {
-                        encpath = file.path().string() + ".Zenc";
-                    }
-                    FileSource f(filepath.c_str(), true,
-                        new AuthenticatedEncryptionFilter(e,
-                            new FileSink(encpath.c_str())));
-                    regenpass();
-                    if (delFile) {
-                        if (remove(filepath.c_str()) == 0) {
-                            continue;
+                if (file.path().extension().string() == ".Zenc" || fs::is_directory(file)) {
+                    cout << "Cannot Encrypt: "<<file.path().string() << endl;
+                    cout << "File is a Directory or is already encrypted" << endl;
+                    continue;
+                }
+                else {
+
+                    try {
+                        string filepath = file.path().string();
+                        cout << "Encrypting : " << filepath << endl;
+                        if (settings.enctitle) {
+                            encpath = genEncTitle(filepath);
                         }
                         else {
-                            cout << "Cannot Delete File:" << settings.fpath << endl;
-                            cout << "ERROR: " << strerror(errno) << endl;
-                            while (true) {
-                                cout << "Continue? [y/n]\t";
-                                char ch;
-                                cin >> ch;
-                                if (ch == 'y' || ch == 'Y') {
-                                    break;
-                                }
-                                else if (ch == 'n' || ch == 'N') {
-                                    cout << "Press ENTER to Exit ...";
-                                    getchar();
-                                    exit(EXIT_FAILURE);
-                                }
-                                else {
-                                    cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
-                                }
+                            encpath = file.path().string() + ".Zenc";
+                        }
+                        FileSource f(filepath.c_str(), true,
+                            new AuthenticatedEncryptionFilter(e,
+                                new FileSink(encpath.c_str())));
+                        regenpass();
+                        if (delFile) {
+                            if (remove(filepath.c_str()) == 0) {
+                                continue;
                             }
-                            continue;
+                            else {
+                                cout << "Cannot Delete File:" << settings.fpath << endl;
+                                cout << "ERROR: " << strerror(errno) << endl;
+                                while (true) {
+                                    cout << "Continue? [y/n]\t";
+                                    char ch;
+                                    cin >> ch;
+                                    if (ch == 'y' || ch == 'Y') {
+                                        break;
+                                    }
+                                    else if (ch == 'n' || ch == 'N') {
+                                        cout << "Press ENTER to Exit ...";
+                                        getchar();
+                                        exit(EXIT_FAILURE);
+                                    }
+                                    else {
+                                        cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
+                                    }
+                                }
+                                continue;
+                            }
                         }
                     }
-                }
-                catch (CryptoPP::Exception& e)
-                {
-                    cerr << "Caught Exception..." << endl;
-                    cerr << e.what() << endl;
-                    cerr << endl;
-                    while (true) {
-                        cout << "Continue? [y/n]\t";
-                        char ch;
-                        cin >> ch;
-                        if (ch == 'y' || ch == 'Y') {
-                            break;
+                    catch (CryptoPP::Exception& e)
+                    {
+                        cerr << "Caught Exception..." << endl;
+                        cerr << e.what() << endl;
+                        cerr << endl;
+                        while (true) {
+                            cout << "Continue? [y/n]\t";
+                            char ch;
+                            cin >> ch;
+                            if (ch == 'y' || ch == 'Y') {
+                                break;
+                            }
+                            else if (ch == 'n' || ch == 'N') {
+                                cout << "Press ENTER to Exit ...";
+                                getchar();
+                                exit(EXIT_FAILURE);
+                            }
+                            else {
+                                cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
+                            }
                         }
-                        else if (ch == 'n' || ch == 'N') {
-                            cout << "Press ENTER to Exit ...";
-                            getchar();
-                            exit(EXIT_FAILURE);
-                        }
-                        else {
-                            cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
-                        }
+                        continue;
                     }
-                    continue;
-                }
-                catch (...) {
-                    cout << "Cannot Encrypt File:" << settings.fpath << endl;
-                    cout << "ERROR: " << strerror(errno) << endl;
-                    while (true) {
-                        cout << "Continue? [y/n]\t";
-                        char ch;
-                        cin >> ch;
-                        if (ch == 'y' || ch == 'Y') {
-                            break;
+                    catch (...) {
+                        cout << "Cannot Encrypt File:" << settings.fpath << endl;
+                        cout << "ERROR: " << strerror(errno) << endl;
+                        while (true) {
+                            cout << "Continue? [y/n]\t";
+                            char ch;
+                            cin >> ch;
+                            if (ch == 'y' || ch == 'Y') {
+                                break;
+                            }
+                            else if (ch == 'n' || ch == 'N') {
+                                cout << "Press ENTER to Exit ...";
+                                getchar();
+                                exit(EXIT_FAILURE);
+                            }
+                            else {
+                                cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
+                            }
                         }
-                        else if (ch == 'n' || ch == 'N') {
-                            cout << "Press ENTER to Exit ...";
-                            getchar();
-                            exit(EXIT_FAILURE);
-                        }
-                        else {
-                            cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
-                        }
+                        continue;
                     }
-                    continue;
                 }
             }
         }
@@ -736,9 +786,9 @@ private:
             }
             for (auto& file : fs::recursive_directory_iterator(encdir)) {
                 cout << "Decrypting : " << file.path().string() << endl;
-                if (fs::is_directory(file) || file.path().extension().string() != ".Zenc") {
-                    cout << "Cannot Decrypt File:" << file.path().string() << endl;
-                    cout << "ERROR: File not encrypted or was not encrypted with Zenc" << endl;
+                if (file.path().extension().string() != ".Zenc" || fs::is_directory(file)) {
+                    cout << "Cannot Decrypt File:" << settings.fpath << endl;
+                    cout << "ERROR: File not encrypted with Zenc or is a directory" << endl;
                     continue;
                 }
                 else {
@@ -1035,6 +1085,11 @@ private:
         }
     }
     void encryptFile() {
+        fs::path checkext(settings.fpath);
+        if (checkext.extension().string() == ".Zenc") {
+            cout << "File Already Encrypted Using Zenc" << endl;
+            exit(EXIT_SUCCESS);
+        }
         try {
             cout << "Encrypting : " << settings.fpath << endl;
             while (true) {
@@ -1217,89 +1272,97 @@ private:
                 exit(EXIT_FAILURE);
             }
             for (auto& file : fs::recursive_directory_iterator(encdir)) {
-                try {
-                    string filepath = file.path().string();
-                    cout << "Encrypting : " << filepath << endl;
-                    if (settings.enctitle) {
-                        encpath = genEncTitle(filepath);
-                    }
-                    else {
-                        encpath = file.path().string() + ".Zenc";
-                    }
-                    FileSource f(filepath.c_str(), true,
-                        new AuthenticatedEncryptionFilter(e,
-                            new FileSink(encpath.c_str())));
-                    regenpass();
-                    if (delFile) {
-                        if (remove(filepath.c_str()) == 0) {
-                            continue;
+                if (file.path().extension().string() == ".Zenc" || fs::is_directory(file)) {
+                    cout << "Cannot Encrypt: " << file.path().string() << endl;
+                    cout << "File is a Directory or is already encrypted" << endl;
+                    continue;
+                }
+                else {
+
+                    try {
+                        string filepath = file.path().string();
+                        cout << "Encrypting : " << filepath << endl;
+                        if (settings.enctitle) {
+                            encpath = genEncTitle(filepath);
                         }
                         else {
-                            cout << "Cannot Delete File:" << settings.fpath << endl;
-                            cout << "ERROR: " << strerror(errno) << endl;
-                            while (true) {
-                                cout << "Continue? [y/n]\t";
-                                char ch;
-                                cin >> ch;
-                                if (ch == 'y' || ch == 'Y') {
-                                    break;
-                                }
-                                else if (ch == 'n' || ch == 'N') {
-                                    cout << "Press ENTER to Exit ...";
-                                    getchar();
-                                    exit(EXIT_FAILURE);
-                                }
-                                else {
-                                    cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
-                                }
+                            encpath = file.path().string() + ".Zenc";
+                        }
+                        FileSource f(filepath.c_str(), true,
+                            new AuthenticatedEncryptionFilter(e,
+                                new FileSink(encpath.c_str())));
+                        regenpass();
+                        if (delFile) {
+                            if (remove(filepath.c_str()) == 0) {
+                                continue;
                             }
-                            continue;
+                            else {
+                                cout << "Cannot Delete File:" << settings.fpath << endl;
+                                cout << "ERROR: " << strerror(errno) << endl;
+                                while (true) {
+                                    cout << "Continue? [y/n]\t";
+                                    char ch;
+                                    cin >> ch;
+                                    if (ch == 'y' || ch == 'Y') {
+                                        break;
+                                    }
+                                    else if (ch == 'n' || ch == 'N') {
+                                        cout << "Press ENTER to Exit ...";
+                                        getchar();
+                                        exit(EXIT_FAILURE);
+                                    }
+                                    else {
+                                        cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
+                                    }
+                                }
+                                continue;
+                            }
                         }
                     }
-                }
-                catch (CryptoPP::Exception& e)
-                {
-                    cerr << "Caught Exception..." << endl;
-                    cerr << e.what() << endl;
-                    cerr << endl;
-                    while (true) {
-                        cout << "Continue? [y/n]\t";
-                        char ch;
-                        cin >> ch;
-                        if (ch == 'y' || ch == 'Y') {
-                            break;
+                    catch (CryptoPP::Exception& e)
+                    {
+                        cerr << "Caught Exception..." << endl;
+                        cerr << e.what() << endl;
+                        cerr << endl;
+                        while (true) {
+                            cout << "Continue? [y/n]\t";
+                            char ch;
+                            cin >> ch;
+                            if (ch == 'y' || ch == 'Y') {
+                                break;
+                            }
+                            else if (ch == 'n' || ch == 'N') {
+                                cout << "Press ENTER to Exit ...";
+                                getchar();
+                                exit(EXIT_FAILURE);
+                            }
+                            else {
+                                cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
+                            }
                         }
-                        else if (ch == 'n' || ch == 'N') {
-                            cout << "Press ENTER to Exit ...";
-                            getchar();
-                            exit(EXIT_FAILURE);
-                        }
-                        else {
-                            cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
-                        }
+                        continue;
                     }
-                    continue;
-                }
-                catch (...) {
-                    cout << "Cannot Encrypt File:" << settings.fpath << endl;
-                    cout << "ERROR: " << strerror(errno) << endl;
-                    while (true) {
-                        cout << "Continue? [y/n]\t";
-                        char ch;
-                        cin >> ch;
-                        if (ch == 'y' || ch == 'Y') {
-                            break;
+                    catch (...) {
+                        cout << "Cannot Encrypt File:" << settings.fpath << endl;
+                        cout << "ERROR: " << strerror(errno) << endl;
+                        while (true) {
+                            cout << "Continue? [y/n]\t";
+                            char ch;
+                            cin >> ch;
+                            if (ch == 'y' || ch == 'Y') {
+                                break;
+                            }
+                            else if (ch == 'n' || ch == 'N') {
+                                cout << "Press ENTER to Exit ...";
+                                getchar();
+                                exit(EXIT_FAILURE);
+                            }
+                            else {
+                                cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
+                            }
                         }
-                        else if (ch == 'n' || ch == 'N') {
-                            cout << "Press ENTER to Exit ...";
-                            getchar();
-                            exit(EXIT_FAILURE);
-                        }
-                        else {
-                            cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
-                        }
+                        continue;
                     }
-                    continue;
                 }
             }
         }
@@ -1340,109 +1403,95 @@ private:
             }
             for (auto& file : fs::recursive_directory_iterator(encdir)) {
                 cout << "Decrypting : " << file.path().string() << endl;
-                if (file.path().extension().string() != ".Zenc") {
+                if (file.path().extension().string() != ".Zenc" || fs::is_directory(file)) {
                     cout << "Cannot Decrypt File:" << settings.fpath << endl;
-                    cout << "ERROR: File not encrypted with Zenc" << endl;
-                    while (true) {
-                        cout << "Continue? [y/n]\t";
-                        char ch;
-                        cin >> ch;
-                        if (ch == 'y' || ch == 'Y') {
-                            break;
-                        }
-                        else if (ch == 'n' || ch == 'N') {
-                            cout << "Press ENTER to Exit ...";
-                            getchar();
-                            exit(EXIT_FAILURE);
-                        }
-                        else {
-                            cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
-                        }
-                    }
+                    cout << "ERROR: File not encrypted with Zenc or is a directory" << endl;
                     continue;
                 }
-                try {
-                    string filepath = file.path().string();
-                    if (settings.dectitle) {
-                        decpath = genDecTitle(filepath);
-                    }
-                    else {
-                        decpath = eraseSubStr(filepath, ".Zenc");
-                    }
-                    FileSource f(filepath.c_str(), true,
-                        new AuthenticatedDecryptionFilter(d,
-                            new FileSink(decpath.c_str())));
-                    regenpass();
-                    if (delFile) {
-                        if (remove(filepath.c_str()) == 0) {
-                            continue;
+                else {
+                    try {
+                        string filepath = file.path().string();
+                        if (settings.dectitle) {
+                            decpath = genDecTitle(filepath);
                         }
                         else {
-                            cout << "Cannot Delete File:" << settings.fpath << endl;
-                            cout << "ERROR: " << strerror(errno) << endl;
-                            while (true) {
-                                cout << "Continue? [y/n]\t";
-                                char ch;
-                                cin >> ch;
-                                if (ch == 'y' || ch == 'Y') {
-                                    break;
-                                }
-                                else if (ch == 'n' || ch == 'N') {
-                                    cout << "Press ENTER to Exit ...";
-                                    getchar();
-                                    exit(EXIT_FAILURE);
-                                }
-                                else {
-                                    cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
-                                }
+                            decpath = eraseSubStr(filepath, ".Zenc");
+                        }
+                        FileSource f(filepath.c_str(), true,
+                            new AuthenticatedDecryptionFilter(d,
+                                new FileSink(decpath.c_str())));
+                        regenpass();
+                        if (delFile) {
+                            if (remove(filepath.c_str()) == 0) {
+                                continue;
                             }
-                            continue;
+                            else {
+                                cout << "Cannot Delete File:" << settings.fpath << endl;
+                                cout << "ERROR: " << strerror(errno) << endl;
+                                while (true) {
+                                    cout << "Continue? [y/n]\t";
+                                    char ch;
+                                    cin >> ch;
+                                    if (ch == 'y' || ch == 'Y') {
+                                        break;
+                                    }
+                                    else if (ch == 'n' || ch == 'N') {
+                                        cout << "Press ENTER to Exit ...";
+                                        getchar();
+                                        exit(EXIT_FAILURE);
+                                    }
+                                    else {
+                                        cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
+                                    }
+                                }
+                                continue;
+                            }
                         }
                     }
-                }
-                catch (CryptoPP::Exception& e)
-                {
-                    cerr << "Caught Exception..." << endl;
-                    cerr << e.what() << endl;
-                    cerr << endl;
-                    while (true) {
-                        cout << "Continue? [y/n]\t";
-                        char ch;
-                        cin >> ch;
-                        if (ch == 'y' || ch == 'Y') {
-                            break;
+                    catch (CryptoPP::Exception& e)
+                    {
+                        cerr << "Caught Exception..." << endl;
+                        cerr << e.what() << endl;
+                        cerr << endl;
+                        while (true) {
+                            cout << "Continue? [y/n]\t";
+                            char ch;
+                            cin >> ch;
+                            if (ch == 'y' || ch == 'Y') {
+                                break;
+                            }
+                            else if (ch == 'n' || ch == 'N') {
+                                cout << "Press ENTER to Exit ...";
+                                getchar();
+                                exit(EXIT_FAILURE);
+                            }
+                            else {
+                                cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
+                            }
                         }
-                        else if (ch == 'n' || ch == 'N') {
-                            cout << "Press ENTER to Exit ...";
-                            getchar();
-                            exit(EXIT_FAILURE);
-                        }
-                        else {
-                            cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
-                        }
+                        continue;
                     }
-                    continue;
-                }
-                catch (...) {
-                    cout << "Cannot Encrypt File:" << settings.fpath << endl;
-                    cout << "ERROR: " << strerror(errno) << endl;
-                    while (true) {
-                        cout << "Continue? [y/n]\t";
-                        char ch;
-                        cin >> ch;
-                        if (ch == 'y' || ch == 'Y') {
-                            break;
+                    catch (...) {
+                        cout << "Cannot Encrypt File:" << settings.fpath << endl;
+                        cout << "ERROR: " << strerror(errno) << endl;
+                        while (true) {
+                            cout << "Continue? [y/n]\t";
+                            char ch;
+                            cin >> ch;
+                            if (ch == 'y' || ch == 'Y') {
+                                break;
+                            }
+                            else if (ch == 'n' || ch == 'N') {
+                                cout << "Press ENTER to Exit ...";
+                                getchar();
+                                exit(EXIT_FAILURE);
+                            }
+                            else {
+                                cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
+                            }
                         }
-                        else if (ch == 'n' || ch == 'N') {
-                            cout << "Press ENTER to Exit ...";
-                            getchar();
-                            exit(EXIT_FAILURE);
-                        }
-                        else {
-                            cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
-                        }
+                        continue;
                     }
-                    continue;
                 }
             }
         }
@@ -1652,6 +1701,11 @@ private:
         }
     }
     void encryptFile() {
+        fs::path checkext(settings.fpath);
+        if (checkext.extension().string() == ".Zenc") {
+            cout << "File Already Encrypted Using Zenc" << endl;
+            exit(EXIT_SUCCESS);
+        }
         try {
             cout << "Encrypting : " << settings.fpath << endl;
             while (true) {
@@ -1834,89 +1888,97 @@ private:
                 exit(EXIT_FAILURE);
             }
             for (auto& file : fs::recursive_directory_iterator(encdir)) {
-                try {
-                    string filepath = file.path().string();
-                    cout << "Encrypting : " << filepath << endl;
-                    if (settings.enctitle) {
-                        encpath = genEncTitle(filepath);
-                    }
-                    else {
-                        encpath = file.path().string() + ".Zenc";
-                    }
-                    FileSource f(filepath.c_str(), true,
-                        new AuthenticatedEncryptionFilter(e,
-                            new FileSink(encpath.c_str())));
-                    regenpass();
-                    if (delFile) {
-                        if (remove(filepath.c_str()) == 0) {
-                            continue;
+                if (file.path().extension().string() == ".Zenc" || fs::is_directory(file)) {
+                    cout << "Cannot Encrypt: " << file.path().string() << endl;
+                    cout << "File is a Directory or is already encrypted" << endl;
+                    continue;
+                }
+                else {
+
+                    try {
+                        string filepath = file.path().string();
+                        cout << "Encrypting : " << filepath << endl;
+                        if (settings.enctitle) {
+                            encpath = genEncTitle(filepath);
                         }
                         else {
-                            cout << "Cannot Delete File:" << settings.fpath << endl;
-                            cout << "ERROR: " << strerror(errno) << endl;
-                            while (true) {
-                                cout << "Continue? [y/n]\t";
-                                char ch;
-                                cin >> ch;
-                                if (ch == 'y' || ch == 'Y') {
-                                    break;
-                                }
-                                else if (ch == 'n' || ch == 'N') {
-                                    cout << "Press ENTER to Exit ...";
-                                    getchar();
-                                    exit(EXIT_FAILURE);
-                                }
-                                else {
-                                    cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
-                                }
+                            encpath = file.path().string() + ".Zenc";
+                        }
+                        FileSource f(filepath.c_str(), true,
+                            new AuthenticatedEncryptionFilter(e,
+                                new FileSink(encpath.c_str())));
+                        regenpass();
+                        if (delFile) {
+                            if (remove(filepath.c_str()) == 0) {
+                                continue;
                             }
-                            continue;
+                            else {
+                                cout << "Cannot Delete File:" << settings.fpath << endl;
+                                cout << "ERROR: " << strerror(errno) << endl;
+                                while (true) {
+                                    cout << "Continue? [y/n]\t";
+                                    char ch;
+                                    cin >> ch;
+                                    if (ch == 'y' || ch == 'Y') {
+                                        break;
+                                    }
+                                    else if (ch == 'n' || ch == 'N') {
+                                        cout << "Press ENTER to Exit ...";
+                                        getchar();
+                                        exit(EXIT_FAILURE);
+                                    }
+                                    else {
+                                        cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
+                                    }
+                                }
+                                continue;
+                            }
                         }
                     }
-                }
-                catch (CryptoPP::Exception& e)
-                {
-                    cerr << "Caught Exception..." << endl;
-                    cerr << e.what() << endl;
-                    cerr << endl;
-                    while (true) {
-                        cout << "Continue? [y/n]\t";
-                        char ch;
-                        cin >> ch;
-                        if (ch == 'y' || ch == 'Y') {
-                            break;
+                    catch (CryptoPP::Exception& e)
+                    {
+                        cerr << "Caught Exception..." << endl;
+                        cerr << e.what() << endl;
+                        cerr << endl;
+                        while (true) {
+                            cout << "Continue? [y/n]\t";
+                            char ch;
+                            cin >> ch;
+                            if (ch == 'y' || ch == 'Y') {
+                                break;
+                            }
+                            else if (ch == 'n' || ch == 'N') {
+                                cout << "Press ENTER to Exit ...";
+                                getchar();
+                                exit(EXIT_FAILURE);
+                            }
+                            else {
+                                cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
+                            }
                         }
-                        else if (ch == 'n' || ch == 'N') {
-                            cout << "Press ENTER to Exit ...";
-                            getchar();
-                            exit(EXIT_FAILURE);
-                        }
-                        else {
-                            cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
-                        }
+                        continue;
                     }
-                    continue;
-                }
-                catch (...) {
-                    cout << "Cannot Encrypt File:" << settings.fpath << endl;
-                    cout << "ERROR: " << strerror(errno) << endl;
-                    while (true) {
-                        cout << "Continue? [y/n]\t";
-                        char ch;
-                        cin >> ch;
-                        if (ch == 'y' || ch == 'Y') {
-                            break;
+                    catch (...) {
+                        cout << "Cannot Encrypt File:" << settings.fpath << endl;
+                        cout << "ERROR: " << strerror(errno) << endl;
+                        while (true) {
+                            cout << "Continue? [y/n]\t";
+                            char ch;
+                            cin >> ch;
+                            if (ch == 'y' || ch == 'Y') {
+                                break;
+                            }
+                            else if (ch == 'n' || ch == 'N') {
+                                cout << "Press ENTER to Exit ...";
+                                getchar();
+                                exit(EXIT_FAILURE);
+                            }
+                            else {
+                                cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
+                            }
                         }
-                        else if (ch == 'n' || ch == 'N') {
-                            cout << "Press ENTER to Exit ...";
-                            getchar();
-                            exit(EXIT_FAILURE);
-                        }
-                        else {
-                            cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
-                        }
+                        continue;
                     }
-                    continue;
                 }
             }
         }
@@ -1957,9 +2019,9 @@ private:
             }
             for (auto& file : fs::recursive_directory_iterator(encdir)) {
                 cout << "Decrypting : " << file.path().string() << endl;
-                if (fs::is_directory(file) || file.path().extension().string() != ".Zenc") {
-                    cout << "Cannot Decrypt File:" << file.path().string() << endl;
-                    cout << "ERROR: File not encrypted or was not encrypted with Zenc" << endl;
+                if (file.path().extension().string() != ".Zenc" || fs::is_directory(file)) {
+                    cout << "Cannot Decrypt File:" << settings.fpath << endl;
+                    cout << "ERROR: File not encrypted with Zenc or is a directory" << endl;
                     continue;
                 }
                 else {
@@ -2119,6 +2181,623 @@ public:
         }
     }
 };
+class cbc : commanEncryptor
+{
+private:
+    CBC_Mode< AES >::Encryption e;
+    CBC_Mode< AES >::Decryption d;
+    config settings;
+    bool delFile = false;
+    void regenpass() {
+        if (settings.password == true) {
+            genKeyFromPass();
+        }
+        else if (settings.keyfile == true) {
+            loadKeyFromFile();
+        }
+        else if (settings.genpass == true) {
+            genKeyFile();
+        }
+        else {
+            cout << "Error Invalid Configuration\n" << strerror(errno) << endl;
+            cout << "Press ENTER to Exit ...";
+            getchar();
+            exit(EXIT_FAILURE);
+        }
+    }
+    void genKeyFromPass() {
+        try {
+            string password = settings.kpathPass;
+            string iv = randomgeniv(password, AES::BLOCKSIZE);
+            //hdkf
+            SecByteBlock key(AES::DEFAULT_KEYLENGTH);
+            HKDF<SHA256> hkdf;
+            string filepath = settings.fpath;
+            fs::path f(filepath);
+            if (f.extension().string() == ".Zenc")
+                filepath = eraseSubStr(filepath, ".Zenc");
+            hkdf.DeriveKey(key, sizeof(key), (const unsigned char*)password.data(), password.size(),
+                (const unsigned char*)iv.data(), iv.size(), NULL, 0);
+
+            if (settings.option == "-e" || settings.option == "-ed") {
+                e.SetKeyWithIV(key, sizeof(key), (const unsigned char*)iv.c_str());
+            }
+            else {
+                d.SetKeyWithIV(key, sizeof(key), (const unsigned char*)iv.c_str());
+            }
+        }
+        catch (CryptoPP::Exception& e)
+        {
+            cerr << "Caught Exception..." << endl;
+            cerr << e.what() << endl;
+            cerr << endl;
+            cout << "Press ENTER to Exit ...";
+            getchar();
+            exit(EXIT_FAILURE);
+        }
+        catch (...) {
+            cout << "Error generating key from password\n" << strerror(errno) << endl;
+            cout << "Press ENTER to Exit ...";
+            getchar();
+            exit(EXIT_FAILURE);
+        }
+    }
+    void loadKeyFromFile() {
+        try {
+            CryptoPP::byte key[AES::DEFAULT_KEYLENGTH];
+            CryptoPP::byte iv[AES::BLOCKSIZE];
+            fstream rk(settings.kpathPass, ios::in | ios::binary);
+            rk.read((char*)key, sizeof(key));
+            rk.read((char*)iv, sizeof(iv));
+            rk.close();
+            if (settings.option == "-e" || settings.option == "-ed") {
+                e.SetKeyWithIV(key, sizeof(key), iv);
+            }
+            else {
+                d.SetKeyWithIV(key, sizeof(key), iv);
+            }
+        }
+        catch (CryptoPP::Exception& e)
+        {
+            cerr << "Caught Exception..." << endl;
+            cerr << e.what() << endl;
+            cerr << endl;
+            cout << "Press ENTER to Exit ...";
+            getchar();
+            exit(EXIT_FAILURE);
+        }
+        catch (...) {
+            cout << "Error loading key from key file\n" << strerror(errno) << endl;
+            cout << "Press ENTER to Exit ...";
+            getchar();
+            exit(EXIT_FAILURE);
+        }
+    }
+    void genKeyFile() {
+        try {
+            AutoSeededRandomPool prng;
+            CryptoPP::byte key[AES::DEFAULT_KEYLENGTH];
+            prng.GenerateBlock(key, sizeof(key));
+            CryptoPP::byte iv[AES::BLOCKSIZE];
+            prng.GenerateBlock(iv, sizeof(iv));
+            string kpath = getKeypath(settings.fpath);
+            try {
+                fstream writek(kpath, ios::out | ios::binary);
+                writek.write((char*)key, sizeof(key));
+                writek.write((char*)iv, sizeof(iv));
+                writek.close();
+            }
+            catch (...) {
+                cout << "Error writing key file\n" << strerror(errno) << endl;
+                cout << "Press ENTER to Exit ...";
+                getchar();
+                exit(EXIT_FAILURE);
+            }
+            if (settings.option == "-e" || settings.option == "-ed") {
+                e.SetKeyWithIV(key, sizeof(key), iv);
+            }
+            else {
+                d.SetKeyWithIV(key, sizeof(key), iv);
+            }
+        }
+        catch (CryptoPP::Exception& e)
+        {
+            cerr << "Caught Exception..." << endl;
+            cerr << e.what() << endl;
+            cerr << endl;
+            cout << "Press ENTER to Exit ...";
+            getchar();
+            exit(EXIT_FAILURE);
+        }
+        catch (...) {
+            cout << "Error generating key file\n" << strerror(errno) << endl;
+            cout << "Press ENTER to Exit ...";
+            getchar();
+            exit(EXIT_FAILURE);
+        }
+    }
+    void encryptFile() {
+        fs::path checkext(settings.fpath);
+        if (checkext.extension().string() == ".Zenc") {
+            cout << "File Already Encrypted Using Zenc" << endl;
+            exit(EXIT_SUCCESS);
+        }
+        try {
+            cout << "Encrypting : " << settings.fpath << endl;
+            while (true) {
+                cout << "Delete Orignal Files? [y/n]\t";
+                char ch;
+                cin >> ch;
+                if (ch == 'y' || ch == 'Y') {
+                    delFile = true;
+                    break;
+                }
+                else if (ch == 'n' || ch == 'N') {
+                    delFile = false;
+                    break;
+                }
+                else {
+                    cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
+                }
+            }
+            string encpath;
+            if (settings.enctitle) {
+                encpath = genEncTitle(settings.fpath);
+            }
+            else {
+                encpath = settings.fpath + ".Zenc";
+            }
+
+            FileSource f(settings.fpath.c_str(), true,
+                new StreamTransformationFilter(e,
+                    new FileSink(encpath.c_str())));
+
+            if (delFile) {
+                if (remove(settings.fpath.c_str()) == 0) {
+                }
+                else {
+                    cout << "Cannot Delete File:" << settings.fpath << endl;
+                    cout << "ERROR: " << strerror(errno) << endl;
+                    while (true) {
+                        cout << "Continue? [y/n]\t";
+                        char ch;
+                        cin >> ch;
+                        if (ch == 'y' || ch == 'Y') {
+                            break;
+                        }
+                        else if (ch == 'n' || ch == 'N') {
+                            cout << "Press ENTER to Exit ...";
+                            getchar();
+                            exit(EXIT_FAILURE);
+                        }
+                        else {
+                            cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
+                        }
+                    }
+                }
+            }
+        }
+        catch (CryptoPP::Exception& e)
+        {
+            cerr << "Caught Exception... (135)" << endl;
+            cerr << e.what() << endl;
+            cout << "Press ENTER to Exit ...";
+            getchar();
+            exit(EXIT_FAILURE);
+        }
+        catch (...) {
+            cout << "Cannot Encrypt File:" << settings.fpath << endl;
+            cout << "ERROR: " << strerror(errno) << endl;
+            cout << "Press ENTER to Exit ...";
+            getchar();
+            exit(EXIT_FAILURE);
+        }
+    }
+    void decryptFile() {
+        try {
+            cout << "Decrypting : " << settings.fpath << endl;
+            while (true) {
+                cout << "Delete Orignal Encrypted Files? [y/n]\t";
+                char ch;
+                cin >> ch;
+                if (ch == 'y' || ch == 'Y') {
+                    delFile = true;
+                    break;
+                }
+                else if (ch == 'n' || ch == 'N') {
+                    delFile = false;
+                    break;
+                }
+                else {
+                    cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
+                }
+            }
+            string checkpath = settings.fpath;
+            fs::path check(checkpath);
+            if (check.extension().string() != ".Zenc") {
+                cout << "Cannot Decrypt File:" << settings.fpath << endl;
+                cout << "ERROR: File not encrypted with Zenc" << endl;
+                cout << "Press ENTER to Exit ...";
+                getchar();
+                exit(EXIT_FAILURE);
+            }
+            string decpath;
+            if (settings.dectitle) {
+                decpath = genDecTitle(settings.fpath);
+            }
+            else {
+                decpath = eraseSubStr(settings.fpath, ".Zenc");
+            }
+            cout << "Decrypted Path: " << decpath << endl;
+            getchar();
+            FileSource f(settings.fpath.c_str(), true,
+                new StreamTransformationFilter(d,
+                    new FileSink(decpath.c_str())));
+            if (delFile) {
+                if (remove(settings.fpath.c_str()) == 0) {
+                }
+                else {
+                    cout << "Cannot Delete File:" << settings.fpath << endl;
+                    cout << "ERROR: " << strerror(errno) << endl;
+                    while (true) {
+                        cout << "Continue? [y/n]\t";
+                        char ch;
+                        cin >> ch;
+                        if (ch == 'y' || ch == 'Y') {
+                            break;
+                        }
+                        else if (ch == 'n' || ch == 'N') {
+                            cout << "Press ENTER to Exit ...";
+                            getchar();
+                            exit(EXIT_FAILURE);
+                        }
+                        else {
+                            cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
+                        }
+                    }
+                }
+            }
+        }
+        catch (CryptoPP::Exception& e)
+        {
+
+            cerr << "Caught Exception..." << endl;
+            cerr << e.what() << endl;
+            cout << "Press ENTER to Exit ...";
+            getchar();
+            exit(EXIT_FAILURE);
+        }
+        catch (...) {
+            cout << "Cannot Decrypt File:" << settings.fpath << endl;
+            cout << "ERROR: " << strerror(errno) << endl;
+            cout << "Press ENTER to Exit ...";
+            getchar();
+            exit(EXIT_FAILURE);
+        }
+
+    }
+    void encryptFolder() {
+        try {
+            while (true) {
+                cout << "Delete Orignal Files? [y/n]\t";
+                char ch;
+                cin >> ch;
+                if (ch == 'y' || ch == 'Y') {
+                    delFile = true;
+                    break;
+                }
+                else if (ch == 'n' || ch == 'N') {
+                    delFile = false;
+                    break;
+                }
+                else {
+                    cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
+                }
+            }
+            string encpath;
+            fs::path encdir(settings.fpath);
+            if (!fs::is_directory(encdir)) {
+                cout << "This is not a Director:" << settings.fpath << endl;
+                cout << "ERROR: " << strerror(errno) << endl;
+                cout << "Press ENTER to Exit ...";
+                getchar();
+                exit(EXIT_FAILURE);
+            }
+            for (auto& file : fs::recursive_directory_iterator(encdir)) {
+                if (file.path().extension().string() == ".Zenc" || fs::is_directory(file)) {
+                    cout << "Cannot Encrypt: " << file.path().string() << endl;
+                    cout << "File is a Directory or is already encrypted" << endl;
+                    continue;
+                }
+                else {
+
+                    try {
+                        string filepath = file.path().string();
+                        cout << "Encrypting : " << filepath << endl;
+                        if (settings.enctitle) {
+                            encpath = genEncTitle(filepath);
+                        }
+                        else {
+                            encpath = file.path().string() + ".Zenc";
+                        }
+                        FileSource f(filepath.c_str(), true,
+                            new StreamTransformationFilter(e,
+                                new FileSink(encpath.c_str())));
+                        regenpass();
+                        if (delFile) {
+                            if (remove(filepath.c_str()) == 0) {
+                                continue;
+                            }
+                            else {
+                                cout << "Cannot Delete File:" << settings.fpath << endl;
+                                cout << "ERROR: " << strerror(errno) << endl;
+                                while (true) {
+                                    cout << "Continue? [y/n]\t";
+                                    char ch;
+                                    cin >> ch;
+                                    if (ch == 'y' || ch == 'Y') {
+                                        break;
+                                    }
+                                    else if (ch == 'n' || ch == 'N') {
+                                        cout << "Press ENTER to Exit ...";
+                                        getchar();
+                                        exit(EXIT_FAILURE);
+                                    }
+                                    else {
+                                        cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
+                                    }
+                                }
+                                continue;
+                            }
+                        }
+                    }
+                    catch (CryptoPP::Exception& e)
+                    {
+                        cerr << "Caught Exception..." << endl;
+                        cerr << e.what() << endl;
+                        cerr << endl;
+                        while (true) {
+                            cout << "Continue? [y/n]\t";
+                            char ch;
+                            cin >> ch;
+                            if (ch == 'y' || ch == 'Y') {
+                                break;
+                            }
+                            else if (ch == 'n' || ch == 'N') {
+                                cout << "Press ENTER to Exit ...";
+                                getchar();
+                                exit(EXIT_FAILURE);
+                            }
+                            else {
+                                cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
+                            }
+                        }
+                        continue;
+                    }
+                    catch (...) {
+                        cout << "Cannot Encrypt File:" << settings.fpath << endl;
+                        cout << "ERROR: " << strerror(errno) << endl;
+                        while (true) {
+                            cout << "Continue? [y/n]\t";
+                            char ch;
+                            cin >> ch;
+                            if (ch == 'y' || ch == 'Y') {
+                                break;
+                            }
+                            else if (ch == 'n' || ch == 'N') {
+                                cout << "Press ENTER to Exit ...";
+                                getchar();
+                                exit(EXIT_FAILURE);
+                            }
+                            else {
+                                cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
+                            }
+                        }
+                        continue;
+                    }
+                }
+            }
+        }
+        catch (...) {
+            cout << "Cannot Encrypt Directory:" << settings.fpath << endl;
+            cout << "ERROR: " << strerror(errno) << endl;
+            cout << "Press ENTER to Exit ...";
+            getchar();
+            exit(EXIT_FAILURE);
+        }
+    }
+    void decryptFolder() {
+        try {
+            while (true) {
+                cout << "Delete Orignal Encrypted Files? [y/n]\t";
+                char ch;
+                cin >> ch;
+                if (ch == 'y' || ch == 'Y') {
+                    delFile = true;
+                    break;
+                }
+                else if (ch == 'n' || ch == 'N') {
+                    delFile = false;
+                    break;
+                }
+                else {
+                    cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
+                }
+            }
+            string decpath;
+            fs::path encdir(settings.fpath);
+            if (!fs::is_directory(encdir)) {
+                cout << "This is not a Director:" << settings.fpath << endl;
+                cout << "ERROR: " << strerror(errno) << endl;
+                cout << "Press ENTER to Exit ...";
+                getchar();
+                exit(EXIT_FAILURE);
+            }
+            for (auto& file : fs::recursive_directory_iterator(encdir)) {
+                cout << "Decrypting : " << file.path().string() << endl;
+                if (file.path().extension().string() != ".Zenc" || fs::is_directory(file)) {
+                    cout << "Cannot Decrypt File:" << settings.fpath << endl;
+                    cout << "ERROR: File not encrypted with Zenc or is a directory" << endl;
+                    continue;
+                }
+                else {
+                    try {
+                        string filepath = file.path().string();
+                        if (settings.dectitle) {
+                            decpath = genDecTitle(filepath);
+                        }
+                        else {
+                            decpath = eraseSubStr(filepath, ".Zenc");
+                        }
+                        FileSource f(filepath.c_str(), true,
+                            new StreamTransformationFilter(d,
+                                new FileSink(decpath.c_str())));
+                        regenpass();
+                        if (delFile) {
+                            if (remove(filepath.c_str()) == 0) {
+                                continue;
+                            }
+                            else {
+                                cout << "Cannot Delete File:" << settings.fpath << endl;
+                                cout << "ERROR: " << strerror(errno) << endl;
+                                while (true) {
+                                    cout << "Continue? [y/n]\t";
+                                    char ch;
+                                    cin >> ch;
+                                    if (ch == 'y' || ch == 'Y') {
+                                        break;
+                                    }
+                                    else if (ch == 'n' || ch == 'N') {
+                                        cout << "Press ENTER to Exit ...";
+                                        getchar();
+                                        exit(EXIT_FAILURE);
+                                    }
+                                    else {
+                                        cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
+                                    }
+                                }
+                                continue;
+                            }
+                        }
+                    }
+                    catch (CryptoPP::Exception& e)
+                    {
+                        cerr << "Caught Exception..." << endl;
+                        cerr << e.what() << endl;
+                        cerr << endl;
+                        while (true) {
+                            cout << "Continue? [y/n]\t";
+                            char ch;
+                            cin >> ch;
+                            if (ch == 'y' || ch == 'Y') {
+                                break;
+                            }
+                            else if (ch == 'n' || ch == 'N') {
+                                cout << "Press ENTER to Exit ...";
+                                getchar();
+                                exit(EXIT_FAILURE);
+                            }
+                            else {
+                                cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
+                            }
+                        }
+                        continue;
+                    }
+                    catch (...) {
+                        cout << "Cannot Encrypt File:" << settings.fpath << endl;
+                        cout << "ERROR: " << strerror(errno) << endl;
+                        while (true) {
+                            cout << "Continue? [y/n]\t";
+                            char ch;
+                            cin >> ch;
+                            if (ch == 'y' || ch == 'Y') {
+                                break;
+                            }
+                            else if (ch == 'n' || ch == 'N') {
+                                cout << "Press ENTER to Exit ...";
+                                getchar();
+                                exit(EXIT_FAILURE);
+                            }
+                            else {
+                                cout << "Invalidd Input type y or Y for Yes or n or N for No\n";
+                            }
+                        }
+                        continue;
+                    }
+                }
+            }
+        }
+        catch (...) {
+            cout << "Cannot Encrypt Directory:" << settings.fpath << endl;
+            cout << "ERROR: " << strerror(errno) << endl;
+            cout << "Press ENTER to Exit ...";
+            getchar();
+            exit(EXIT_FAILURE);
+        }
+    }
+public:
+    void init(config c) {
+        settings = c;
+        string fp = settings.fpath;
+        fs::path f(fp);
+        if (f.extension().string() == ".Zenc" && (settings.option == "-e" || settings.option == "-ed")) {
+            cout << "File Already Encrypted" << endl;
+            cout << "Press ENTER to Exit ...";
+            getchar();
+            exit(EXIT_FAILURE);
+        }
+        if (settings.password == true) {
+            genKeyFromPass();
+        }
+        else if (settings.keyfile == true) {
+            loadKeyFromFile();
+        }
+        else if (settings.genpass == true) {
+            genKeyFile();
+        }
+        else {
+            cout << "Error Invalid Configuration\n" << strerror(errno) << endl;
+            cout << "Press ENTER to Exit ...";
+            getchar();
+            exit(EXIT_FAILURE);
+        }
+        if (settings.option == "-e" || settings.option == "-ed") {
+            if (settings.option == "-e") {
+                encryptFile();
+            }
+            else if (settings.option == "-ed") {
+                encryptFolder();
+            }
+            else {
+                cout << "Error Invalid Configuration\n" << strerror(errno) << endl;
+                cout << "Press ENTER to Exit ...";
+                getchar();
+                exit(EXIT_FAILURE);
+            }
+        }
+        else if (settings.option == "-d" || settings.option == "-dd") {
+            if (settings.option == "-d") {
+                decryptFile();
+            }
+            else if (settings.option == "-dd") {
+                decryptFolder();
+            }
+            else {
+                cout << "Error Invalid Configuration\n" << strerror(errno) << endl;
+                cout << "Press ENTER to Exit ...";
+                getchar();
+                exit(EXIT_FAILURE);
+            }
+        }
+        else {
+            cout << "Error Invalid Configuration\n" << strerror(errno) << endl;
+            cout << "Press ENTER to Exit ...";
+            getchar();
+            exit(EXIT_FAILURE);
+        }
+    }
+};
+
 
 //MISC FUNCTIONS
 void help() {
@@ -2142,11 +2821,13 @@ void help() {
     cout << "\t1. gcm2k\tGCM with 2K tables" << endl;
     cout << "\t2. gcm64k\tGCM with 64k tables" << endl;
     cout << "\t3. eax\t\tEAX mode" << endl;
+    cout << "\t4. cbc\t\tCBC mode" << endl;
     cout << endl;
     cout << "-p\t\tIf you want to enter the <password> or the <path> to an existing .key file" << endl;
     cout << "-np\t\tIf you don;t want to specify a password then a new .key file will be genrated in the same directory";
     cout << "ADDITIONAL OPTIONS:" << endl;
     cout << "-t\t\tEncrypts the name of the Files also" << endl;
+    cout << "-g\t\tGenerates a password instead of a .zkey file (use with -np)" << endl;
 
     cout << endl;
     cout << "\n$ TO ENCRYPT A DIR" << endl;
@@ -2160,11 +2841,13 @@ void help() {
     cout << "\t1. gcm2k\tGCM with 2K tables" << endl;
     cout << "\t2. gcm64k\tGCM with 64k tables" << endl;
     cout << "\t3. eax\t\tEAX mode" << endl;
+    cout << "\t4. cbc\t\tCBC mode" << endl;
     cout << endl;
     cout << "-p\t\tIf you want to enter the <password> or the <path> to an existing .key file" << endl;
     cout << "-np\t\tIf you don;t want to specify a password then a new .key file will be genrated in the same directory";
     cout << "ADDITIONAL OPTIONS:" << endl;
     cout << "-t\t\tEncrypts the name of the Files also" << endl;
+    cout << "-g\t\tGenerates a password instead of a .zkey file (use with -np)" << endl;
 
     cout << endl;
     cout << "$$$$ FOR DECRYPTING $$$$" << endl;
@@ -2180,6 +2863,7 @@ void help() {
     cout << "\t1. gcm2k\tGCM with 2K tables" << endl;
     cout << "\t2. gcm64k\tGCM with 64k tables" << endl;
     cout << "\t3. eax\t\tEAX mode" << endl;
+    cout << "\t4. cbc\t\tCBC mode" << endl;
     cout << endl;
     cout << "-p\t\tPassword used to encrypt the file if no password was used while encrypting then give the path to the .key file generated at the point of encryption" << endl;
     cout << "ADDITIONAL OPTIONS:" << endl;
@@ -2197,6 +2881,7 @@ void help() {
     cout << "\t1. gcm2k\tGCM with 2K tables" << endl;
     cout << "\t2. gcm64k\tGCM with 64k tables" << endl;
     cout << "\t3. eax\t\tEAX mode" << endl;
+    cout << "\t4. cbc\t\tCBC mode" << endl;
     cout << endl;
     cout << "-p\t\tPassword used to encrypt the file if no password was used while encrypting then give the path to the .key file generated at the point of encryption" << endl;
     cout << "ADDITIONAL OPTIONS:" << endl;
@@ -2205,7 +2890,7 @@ void help() {
 }
 
 //FUNCTIONS
-bool encryptfile(int argc, char** argv) {
+bool traverser(int argc, char** argv) {
     config c;
     c.parseinput(argc, argv);
     //check mode
@@ -2224,70 +2909,24 @@ bool encryptfile(int argc, char** argv) {
         a.init(c);
         return true;
     }
+    else if (c.mode == "cbc") {
+        cbc a;
+        a.init(c);
+        return true;
+    }
     return false;
+}
+bool encryptfile(int argc, char** argv) {
+    return traverser(argc,argv);
 }
 bool encryptfolder(int argc, char** argv) {
-    config c;
-    c.parseinput(argc, argv);
-    //check mode
-    if (c.mode == "gcm2k") {
-        gcm2k a;
-        a.init(c);
-        return true;
-    }
-    else if (c.mode == "gcm64k") {
-        gcm64k a;
-        a.init(c);
-        return true;
-    }
-    else if (c.mode == "eax") {
-        eax a;
-        a.init(c);
-        return true;
-    }
-    return false;
+    return traverser(argc, argv);
 }
 bool decryptfile(int argc, char** argv) {
-    config c;
-    c.parseinput(argc, argv);
-    //check mode
-    if (c.mode == "gcm2k") {
-        gcm2k a;
-        a.init(c);
-        return true;
-    }
-    else if (c.mode == "gcm64k") {
-        gcm64k a;
-        a.init(c);
-        return true;
-    }
-    else if (c.mode == "eax") {
-        eax a;
-        a.init(c);
-        return true;
-    }
-    return false;
+    return traverser(argc, argv);
 }
 bool decryptfolder(int argc, char** argv) {
-    config c;
-    c.parseinput(argc, argv);
-    //check mode
-    if (c.mode == "gcm2k") {
-        gcm2k a;
-        a.init(c);
-        return true;
-    }
-    else if (c.mode == "gcm64k") {
-        gcm64k a;
-        a.init(c);
-        return true;
-    }
-    else if (c.mode == "eax") {
-        eax a;
-        a.init(c);
-        return true;
-    }
-    return false;
+    return traverser(argc, argv);
 }
 
 //MAIN FUNCTION
@@ -2354,4 +2993,6 @@ int main(int argc, char** argv)
         cout.clear();
         exit(0);
     }
+    return 0;
 }
+

@@ -52,6 +52,7 @@ Zenc [-h or -H/-e/-ed/-d/-dd] [FILE PATH] -m [mode] [-p/-np] [Password in case o
        Zenc -e C:\test\test.txt -m gcm2k -p Password123 -t (encrypt with a passwprd)     
        Zenc -e C:\test\test.txt -m gcm2k -p C:\test\test.zkey -t (encrypt with a keyfile)   
        Zenc -e C:\test\test.txt -m gcm2k -np -t (generate a keyfile)
+       Zenc -e C:\test\test.txt -m gcm2k -np -t -g (generate a password)
 
 3. To Encrypt a Directory :<br>
     (on Windows)<br>
@@ -59,6 +60,7 @@ Zenc [-h or -H/-e/-ed/-d/-dd] [FILE PATH] -m [mode] [-p/-np] [Password in case o
        Zenc -ed C:\test\ -m gcm2k -p Password123 - t (encrypt with a passwprd)
        Zenc -ed C:\test\ -m gcm2k -p C:\test\test.zkey -t (encrypt with a keyfile)
        Zenc -ed C:\test\ -m gcm2k -np -t (generate a keyfile)
+       Zenc -ed C:\test\ -m gcm2k -np -t -g (generate a password)
 
 4. To Decrypt a file:<br>
     (on Windows)<br>

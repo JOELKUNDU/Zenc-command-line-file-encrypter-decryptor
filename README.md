@@ -18,93 +18,28 @@ A command line cross platform File/Folder encryptor written in c++ and based on 
 1.  AES-GCM with 2k tables<br>
 2.  AES-GCM with 64k tables<br>
 3.  AES-EAX<br>
+4.  AES-CBC<br>
 (more methods will be added soon)<br>
 
-<h2>::: Zenc HELPBOOK :::</h2>
-Zenc [OPTIONS/TO ENCRYPT A FILE/TO ENCRYPT A FOLDER/TO DECRYPT A FILE/TO DECRYPT A FOLDER]<br>
-<br>
-<h3>$$$$ OPTIONS $$$$</h3>
-<br>
-$ FOR HELP<br>
-- h or -H       OPEN HELPBOOK<br>
-<br>
-<h3>$$$$ FOR ENCRYPTING $$$</h3>
-<br>
-$ TO ENCRYPT A FILE<br>
--e [filepath] -m [mode] -p [password/key path] / -np -[additional_options]<br>
-<br>
--e              To encrypt a file.<br>
-<filepath>      Path to the file to be encrypted<br>
--m              Choose the mode of encrytion<br>
-<br>
-MODES SUPPORTED:<br>
-        1. gcm2k        GCM with 2K tables<br>
-        2. gcm64k       GCM with 64k tables<br>
-        3. eax          EAX mode<br>
-<br>
--p              If you want to enter the <password> or the <path> to an existing .key file<br>
--np             If you don;t want to specify a password then a new .key file will be genrated in the same directoryADDITIONAL OPTIONS:<br>
--t              Encrypts the name of the Files also<br>
-<br>
-<br>
-$ TO ENCRYPT A DIR<br>
--ed [folderpath] -m [mode] -p [password/key path] / -np -[additional_options]<br>
-<br>
--ed             To encrypt a dir.<br>
-<folderpath>    Path to the file to be encrypted<br>
--m              Choose the mode of encrytion<br>
-<br>
-MODES SUPPORTED:<br>
-        1. gcm2k        GCM with 2K tables<br>
-        2. gcm64k       GCM with 64k tables<br>
-        3. eax          EAX mode<br>
-<br>
--p              If you want to enter the <password> or the <path> to an existing .key file<br>
--np             If you don;t want to specify a password then a new .key file will be genrated in the same directoryADDITIONAL OPTIONS:<br>
--t              Encrypts the name of the Files also<br>
-<br>
-<h3>$$$$ FOR DECRYPTING $$$$</h3>
-<br>
-<br>
-$ TO DECRYPT A FILE<br>
--d [filepath] -m [mode] -p [password/key path] / -np -[additional_options]<br>
-<br>
--d              To decrypt a file.<br>
-<filepath>      Path to the file to be decrypted<br>
--m              Choose the mode of encrytion used
-<br>
-MODES SUPPORTED:<br>
-        1. gcm2k        GCM with 2K tables<br>
-        2. gcm64k       GCM with 64k tables<br>
-        3. eax          EAX mode<br>
-<br>
--p              Password used to encrypt the file if no password was used while encrypting then give the path to the .key file generated at the point of encryption<br>
-ADDITIONAL OPTIONS:<br>
--t              Mention this if the file names were encrypted<br>
-<br>
-<br>
-$ TO DECRYPT A FOLDER<br>
--dd [folderpath] -m [mode] -p [password/key path] / -np -[additional_options]<br>
-<br>
--dd             To decrypt a dir.<br>
-<folderpath>    Path to the file to be decrypted<br>
--m              Choose the mode of encrytion used<br>
-<br>
-MODES SUPPORTED:<br>
-        1. gcm2k        GCM with 2K tables<br>
-        2. gcm64k       GCM with 64k tables<br>
-        3. eax          EAX mode<br>
-
--p              Password used to encrypt the file if no password was used while encrypting then give the path to the .key file generated at the point of encryption<br>
-ADDITIONAL OPTIONS:<br>
--t              Mention this if the file names were encrypted<br>
+<h2> How to use </h2>
+Zenc [-h or -H/-e/-ed/-d/-dd] [FILE PATH] -m [mode] [-p/-np] [Password in case of using -p] [-t -g]<br>
+-h or -H &nbsp; Help Menu<br>
+-e &nbsp;&nbsp; Encrypt a file<br>
+-ed&nbsp;&nbsp; Encrypt a directory<br>
+-d &nbsp;&nbsp; Decrypt a file<br>
+-dd&nbsp;&nbsp; Decrypt a directory<br>
+-m &nbsp;&nbsp; Mode of Encryption / Decryption (gcm2k,gcm64k,eax,cbc)<br>
+-p &nbsp;&nbsp; Password provided by the user (no limit in length or characters)<br>
+-np&nbsp;&nbsp; Either a .zkey file is created or if -g is mentioned then a password is created<br>
+-t &nbsp;&nbsp; Will encrypt/decrypt the titles and the extention<br>
+-g &nbsp;&nbsp; Will generate a password of the length specified by the user<br> 
 <br>
 
 <h3>NOTE:</h3>
 1. To delete files run it on an elevated terminal else Permission Denied error will occur. 
 
-<h3>EXAMPLE COMMANDS:<br></h3>
-       1. To open the help book:<br>
+<h3>EXAMPLE COMMANDS:</h3>
+1. To open the help book:<br>
        (on Windows)<br>
 
        .\Zenc.exe -h

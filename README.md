@@ -42,35 +42,35 @@ Zenc [-h or -H/-e/-ed/-d/-dd] [FILE PATH] -m [mode] [-p/-np] [Password in case o
 1. To open the help book:<br>
        (on Windows)<br>
 
-       .\Zenc.exe -h
-       .\Zenc.exe -H
-       .\Zenc.exe
+       Zenc -h
+       Zenc -H
+       Zenc
 
 2. To Encrypt a file:<br>
        (on Windows)
       
-       .\Zenc.exe -e C:\test\test.txt -m gcm2k -p Password123 -t (encrypt with a passwprd)     
-       .\Zenc.exe -e C:\test\test.txt -m gcm2k -p C:\test\test.zkey -t (encrypt with a keyfile)   
-       .\Zenc.exe -e C:\test\test.txt -m gcm2k -np -t (generate a keyfile)
+       Zenc -e C:\test\test.txt -m gcm2k -p Password123 -t (encrypt with a passwprd)     
+       Zenc -e C:\test\test.txt -m gcm2k -p C:\test\test.zkey -t (encrypt with a keyfile)   
+       Zenc -e C:\test\test.txt -m gcm2k -np -t (generate a keyfile)
 
 3. To Encrypt a Directory :<br>
     (on Windows)<br>
 
-       .\Zenc.exe -ed C:\test\ -m gcm2k -p Password123 - t (encrypt with a passwprd)
-       .\Zenc.exe -ed C:\test\ -m gcm2k -p C:\test\test.zkey -t (encrypt with a keyfile)
-       .\Zenc.exe -ed C:\test\ -m gcm2k -np -t (generate a keyfile)
+       Zenc -ed C:\test\ -m gcm2k -p Password123 - t (encrypt with a passwprd)
+       Zenc -ed C:\test\ -m gcm2k -p C:\test\test.zkey -t (encrypt with a keyfile)
+       Zenc -ed C:\test\ -m gcm2k -np -t (generate a keyfile)
 
 4. To Decrypt a file:<br>
     (on Windows)<br>
 
-       .\Zenc.exe -d C:\test\test.txt -m gcm2k -p Password123 -t (decrypt with a passwprd)
-       .\Zenc.exe -d C:\test\test.txt -m gcm2k -p C:\test\test.zkey -t (decrypt with a keyfile)
+       Zenc -d C:\test\test.txt -m gcm2k -p Password123 -t (decrypt with a passwprd)
+       Zenc -d C:\test\test.txt -m gcm2k -p C:\test\test.zkey -t (decrypt with a keyfile)
 
 5. To Decrypt a Directory :<br>
     (on Windows)<br>
     
-       .\Zenc.exe -dd C:\test\ -m gcm2k -p Password123 -t (decrypt with a passwprd)
-       .\Zenc.exe -dd C:\test\ -m gcm2k -p C:\test\test.zkey -t (decrypt with a keyfile)
+       Zenc -dd C:\test\ -m gcm2k -p Password123 -t (decrypt with a passwprd)
+       Zenc -dd C:\test\ -m gcm2k -p C:\test\test.zkey -t (decrypt with a keyfile)
        
-NOTE: change .\Zenc.exe according to your environment.       
+NOTE: change Zenc according to your environment.       
 

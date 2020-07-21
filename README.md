@@ -19,6 +19,10 @@ A command line cross platform File/Folder encryptor written in c++ and based on 
 2.  AES-GCM with 64k tables<br>
 3.  AES-EAX<br>
 4.  AES-CBC<br>
+5.  AES-ECB<br>
+6.  AES-CTR<br>       
+7.  AES-CFB<br>
+8.  AES-OFB<br>
 (more methods will be added soon)<br>
 
 <h2> How to use </h2>
@@ -28,7 +32,7 @@ Zenc [-h or -H/-e/-ed/-d/-dd] [FILE PATH] -m [mode] [-p/-np] [Password in case o
 -ed&nbsp;&nbsp; Encrypt a directory<br>
 -d &nbsp;&nbsp; Decrypt a file<br>
 -dd&nbsp;&nbsp; Decrypt a directory<br>
--m &nbsp;&nbsp; Mode of Encryption / Decryption (gcm2k,gcm64k,eax,cbc)<br>
+-m &nbsp;&nbsp; Mode of Encryption / Decryption (gcm2k,gcm64k,eax,cbc,ecb,ctr,cfb,ofb)<br>
 -p &nbsp;&nbsp; Password provided by the user (no limit in length or characters)<br>
 -np&nbsp;&nbsp; Either a .zkey file is created or if -g is mentioned then a password is created<br>
 -t &nbsp;&nbsp; Will encrypt/decrypt the titles and the extention<br>

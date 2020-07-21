@@ -41,6 +41,7 @@ Zenc [-h or -H/-e/-ed/-d/-dd] [FILE PATH] -m [mode] [-p/-np] [Password in case o
 
 <h3>NOTE:</h3>
 1. To delete files run it on an elevated terminal else Permission Denied error will occur. 
+2. Time taken to do the operation will be displayed in microseconds in the end.
 
 <h3>EXAMPLE COMMANDS:</h3>
 1. To open the help book:<br>

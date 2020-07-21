@@ -6,7 +6,7 @@ A command line cross platform File/Folder encryptor written in c++ and based on 
        - Make sure u set the c++ standard to stdc++17 and have cryptopp installed<Br>
        - compile and use the output. (refer bellow for exampple commands)<br>
        - If you change the output name from Zenc then replace Zenc from the commands given bellow with your output name.<br>
-       <b>(Preferably use this)</b>
+
 <h2>Encryption modes supported:</h2>
 1.  AES-GCM with 2k tables<br>
 2.  AES-GCM with 64k tables<br>

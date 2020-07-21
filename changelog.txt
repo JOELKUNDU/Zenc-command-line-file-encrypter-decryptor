@@ -1,3 +1,12 @@
+21/07/2020 -  Added following modes:
+              AES-ECB
+              AES-CTR
+              AES-CFB
+              AES-OFB
+              Added feature to show time taken for the entire processs in the end.
+              Features Still to be added:
+                1. User defined output paths
+                2. AES-CCM
 20/07/2020 -  Added AES - CBC mode
               Add option to generate passwords instead of .zkey files
               fixed: zkey file being created without extension

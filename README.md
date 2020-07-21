@@ -1,14 +1,7 @@
 <h1>Zenc - command line file encrypter / decryptor</h1>
 A command line cross platform File/Folder encryptor written in c++ and based on Crypto++ library 
 
-<h2>How to use?</h2> 
-<h3>Method 1:</h3> 
-       - Take the .exe given in the release folder.<br>
-       - Paste it somewhere on your PC.<br>
-       - Press Shift and right-click there would be an option to open Powershell/cmd prompt<br>
-       - Refer to the sample commands given bellow.<br>
-       
-<h3>Method 2:</h3> 
+<h2>How to use?</h2>        
        - Take the source file from the src file and paste it in an IDE.<br>
        - Make sure u set the c++ standard to stdc++17 and have cryptopp installed<Br>
        - compile and use the output. (refer bellow for exampple commands)<br>

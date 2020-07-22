@@ -46,40 +46,41 @@ Zenc [-h or -H/-e/-ed/-d/-dd] [FILE PATH] -m [mode] [-p/-np] [Password in case o
 2. Time taken to do the operation will be displayed in microseconds in the end.
 
 <h3>EXAMPLE COMMANDS:</h3>
-1. To open the help book:<br>
-       (on Windows)<br>
 
-       Zenc -h
-       Zenc -H
-       Zenc
+       1. To open the help book:<br>
+              (on Windows)
 
-2. To Encrypt a file:<br>
-       (on Windows)
-      
-       Zenc -e C:\test\test.txt -m gcm2k -p Password123 -t (encrypt with a passwprd)     
-       Zenc -e C:\test\test.txt -m gcm2k -p C:\test\test.zkey -t (encrypt with a keyfile)   
-       Zenc -e C:\test\test.txt -m gcm2k -np -t (generate a keyfile)
-       Zenc -e C:\test\test.txt -m gcm2k -np -t -g (generate a password)
+              Zenc -h
+              Zenc -H
+              Zenc
 
-3. To Encrypt a Directory :<br>
-    (on Windows)<br>
+       2. To Encrypt a file:<br>
+              (on Windows)
 
-       Zenc -ed C:\test\ -m gcm2k -p Password123 - t (encrypt with a passwprd)
-       Zenc -ed C:\test\ -m gcm2k -p C:\test\test.zkey -t (encrypt with a keyfile)
-       Zenc -ed C:\test\ -m gcm2k -np -t (generate a keyfile)
-       Zenc -ed C:\test\ -m gcm2k -np -t -g (generate a password)
+              Zenc -e C:\test\test.txt -m gcm2k -p Password123 -t (encrypt with a passwprd)     
+              Zenc -e C:\test\test.txt -m gcm2k -p C:\test\test.zkey -t (encrypt with a keyfile)   
+              Zenc -e C:\test\test.txt -m gcm2k -np -t (generate a keyfile)
+              Zenc -e C:\test\test.txt -m gcm2k -np -t -g (generate a password)
 
-4. To Decrypt a file:<br>
-    (on Windows)<br>
+       3. To Encrypt a Directory :<br>
+           (on Windows)<br>
 
-       Zenc -d C:\test\test.txt -m gcm2k -p Password123 -t (decrypt with a passwprd)
-       Zenc -d C:\test\test.txt -m gcm2k -p C:\test\test.zkey -t (decrypt with a keyfile)
+              Zenc -ed C:\test\ -m gcm2k -p Password123 - t (encrypt with a passwprd)
+              Zenc -ed C:\test\ -m gcm2k -p C:\test\test.zkey -t (encrypt with a keyfile)
+              Zenc -ed C:\test\ -m gcm2k -np -t (generate a keyfile)
+              Zenc -ed C:\test\ -m gcm2k -np -t -g (generate a password)
 
-5. To Decrypt a Directory :<br>
-    (on Windows)<br>
-    
-       Zenc -dd C:\test\ -m gcm2k -p Password123 -t (decrypt with a passwprd)
-       Zenc -dd C:\test\ -m gcm2k -p C:\test\test.zkey -t (decrypt with a keyfile)
+       4. To Decrypt a file:<br>
+           (on Windows)<br>
+
+              Zenc -d C:\test\test.txt -m gcm2k -p Password123 -t (decrypt with a passwprd)
+              Zenc -d C:\test\test.txt -m gcm2k -p C:\test\test.zkey -t (decrypt with a keyfile)
+
+       5. To Decrypt a Directory :<br>
+           (on Windows)<br>
+
+              Zenc -dd C:\test\ -m gcm2k -p Password123 -t (decrypt with a passwprd)
+              Zenc -dd C:\test\ -m gcm2k -p C:\test\test.zkey -t (decrypt with a keyfile)
        
 NOTE: change Zenc according to your environment.       
 

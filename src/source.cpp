@@ -261,6 +261,7 @@ protected:
         return mainstr;
     }
     string getKeypath(string path) {
+#ifdef _WIN32
         if (!fs::exists("C:\\Zenc\\Keys")) {
             fs::create_directory("C:\\Zenc\\Keys");
         }
@@ -274,10 +275,49 @@ protected:
             return keypath;
         }
         else {
-            string keypath = "C:\\Zenc\\Keys\\" + path +"key.zkey";
+            string keypath = "C:\\Zenc\\Keys\\" + path + "key.zkey";
             cout << "Key Path: " << keypath << endl;
             return keypath;
         }
+#endif // _WIN32
+#ifdef _WIN64
+        if (!fs::exists("C:\\Zenc\\Keys")) {
+            fs::create_directory("C:\\Zenc\\Keys");
+        }
+        fs::path p(path);
+        if (!fs::is_directory(p)) {
+            string ext = p.extension().string();
+            string filename1 = p.filename().string();
+            string filename2 = eraseSubStr(path, filename1 + ext);
+            string keypath = "C:\\Zenc\\Keys\\" + filename1 + "_key.zkey";
+            cout << "Key Path: " << keypath << endl;
+            return keypath;
+        }
+        else {
+            string keypath = "C:\\Zenc\\Keys\\" + path + "key.zkey";
+            cout << "Key Path: " << keypath << endl;
+            return keypath;
+        }
+#endif // _WIN64
+#ifdef __linux__
+        if (!fs::exists("/home/user/Zenc/Keys/")) {
+            fs::create_directory("/home/user/Zenc/Keys/");
+        }
+        fs::path p(path);
+        if (!fs::is_directory(p)) {
+            string ext = p.extension().string();
+            string filename1 = p.filename().string();
+            string filename2 = eraseSubStr(path, filename1 + ext);
+            string keypath = "/home/user/Zenc/Keys/" + filename1 + "_key.zkey";
+            cout << "Key Path: " << keypath << endl;
+            return keypath;
+        }
+        else {
+            string keypath = "/home/user/Zenc/Keys/" + path + "key.zkey";
+            cout << "Key Path: " << keypath << endl;
+            return keypath;
+        }
+#endif // __linux__
     }
     string genEncTitle(string path) {
         try {

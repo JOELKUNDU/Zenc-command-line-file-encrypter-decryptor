@@ -58,7 +58,7 @@ struct config {
         minstd_rand d(rseed % UINT_MAX);
         string charset = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890*=";
         for (int i = 0; i < len; i++) {
-            int c = (d()+a()) % charset.size();
+            int c = (d() + a()) % charset.size();
             out += charset.at(c);
         }
         return out;
@@ -203,7 +203,14 @@ struct config {
         cout << "File/Folder: " << fpath << endl;
         if (password)cout << "Password: " << kpathPass << endl;
         else if (keyfile)cout << "Keyfile Path: " << kpathPass << endl;
-        else if (genpass || (!password && !keyfile))cout << "Password: A new one will be generated and displayed after encryption" << endl;
+        else if (genpass || (!password && !keyfile)) {
+            if (generatePassword) {
+                cout << "Password: A password of the length specified by the user will be generated" << endl;
+            }
+            else {
+                cout << "Keyfile: A keyfile will be generated at C:\\Zenc_keys\\" << endl;
+            }
+        }
         if (enctitle)cout << "Encrypt File Names: TRUE (File names will be encrypted)" << endl;
         if (dectitle)cout << "Decrypt File Names: TRUE (File names will be decrypted) " << endl;
         if (generatePassword) {
@@ -238,9 +245,9 @@ protected:
             int a = (int)password.at(i);
             rseed += (uint64_t)a;
         }
-        minstd_rand d(rseed%UINT_MAX);
+        minstd_rand d(rseed % UINT_MAX);
         string charset = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890*=";
-        for (int i = 0; i < len; i++) {            
+        for (int i = 0; i < len; i++) {
             int c = d() % charset.size();
             out += charset.at(c);
         }
@@ -254,9 +261,23 @@ protected:
         return mainstr;
     }
     string getKeypath(string path) {
+        if (!fs::exists("C:\\Zenc\\Keys")) {
+            fs::create_directory("C:\\Zenc\\Keys");
+        }
         fs::path p(path);
-        string ext = p.extension().string();
-        return eraseSubStr(path, ext) + ".zkey";
+        if (!fs::is_directory(p)) {
+            string ext = p.extension().string();
+            string filename1 = p.filename().string();
+            string filename2 = eraseSubStr(path, filename1 + ext);
+            string keypath = "C:\\Zenc\\Keys\\" + filename1 + "_key.zkey";
+            cout << "Key Path: " << keypath << endl;
+            return keypath;
+        }
+        else {
+            string keypath = "C:\\Zenc\\Keys\\" + path +"key.zkey";
+            cout << "Key Path: " << keypath << endl;
+            return keypath;
+        }
     }
     string genEncTitle(string path) {
         try {
@@ -296,11 +317,11 @@ protected:
         }
     }
     string genDecTitle(string path) {
-        try{
+        try {
             fs::path f(path);
             string filename1 = f.filename().string();
             filename1 = eraseSubStr(filename1, ".Zenc");
-            cout<<"D: " << filename1 << endl;
+            cout << "D: " << filename1 << endl;
             string filename;
             StringSource decode(filename1, true, new HexDecoder(new StringSink(filename)));
             string decname = "";
@@ -371,7 +392,7 @@ private:
             if (f.extension().string() == ".Zenc")
                 filepath = eraseSubStr(filepath, ".Zenc");
             hkdf.DeriveKey(key, key.size(), (const unsigned char*)password.data(), password.size(),
-                (const unsigned char*)iv.data(), iv.size(), NULL ,0);
+                (const unsigned char*)iv.data(), iv.size(), NULL, 0);
             if (settings.option == "-e" || settings.option == "-ed") {
                 e.SetKeyWithIV(key, AES::MAX_KEYLENGTH, key + AES::MAX_KEYLENGTH);
             }
@@ -658,7 +679,7 @@ private:
             }
             for (auto& file : fs::recursive_directory_iterator(encdir)) {
                 if (file.path().extension().string() == ".Zenc" || fs::is_directory(file)) {
-                    cout << "Cannot Encrypt: "<<file.path().string() << endl;
+                    cout << "Cannot Encrypt: " << file.path().string() << endl;
                     cout << "File is a Directory or is already encrypted" << endl;
                     continue;
                 }
@@ -1064,7 +1085,7 @@ private:
                 exit(EXIT_FAILURE);
             }
             if (settings.option == "-e" || settings.option == "-ed") {
-                e.SetKeyWithIV(key, sizeof(key),iv,sizeof(iv));
+                e.SetKeyWithIV(key, sizeof(key), iv, sizeof(iv));
             }
             else {
                 d.SetKeyWithIV(key, sizeof(key), iv, sizeof(iv));
@@ -1604,9 +1625,9 @@ private:
                 filepath = eraseSubStr(filepath, ".Zenc");
             hkdf.DeriveKey(key, sizeof(key), (const unsigned char*)password.data(), password.size(),
                 (const unsigned char*)iv.data(), iv.size(), NULL, 0);
-           
+
             if (settings.option == "-e" || settings.option == "-ed") {
-                e.SetKeyWithIV(key, sizeof(key),(const unsigned char*)iv.c_str(),sizeof((const unsigned char*)iv.c_str()));
+                e.SetKeyWithIV(key, sizeof(key), (const unsigned char*)iv.c_str(), sizeof((const unsigned char*)iv.c_str()));
             }
             else {
                 d.SetKeyWithIV(key, sizeof(key), (const unsigned char*)iv.c_str(), sizeof((const unsigned char*)iv.c_str()));
@@ -1631,7 +1652,7 @@ private:
     void loadKeyFromFile() {
         try {
             unsigned char key[AES::DEFAULT_KEYLENGTH];
-            unsigned char iv[AES::BLOCKSIZE*16];
+            unsigned char iv[AES::BLOCKSIZE * 16];
             fstream rk(settings.kpathPass, ios::in | ios::binary);
             rk.read((char*)key, sizeof(key));
             rk.read((char*)iv, sizeof(iv));
@@ -1664,7 +1685,7 @@ private:
             AutoSeededRandomPool prng;
             unsigned char key[AES::DEFAULT_KEYLENGTH];
             prng.GenerateBlock(key, sizeof(key));
-            unsigned char iv[AES::BLOCKSIZE*16];
+            unsigned char iv[AES::BLOCKSIZE * 16];
             prng.GenerateBlock(iv, sizeof(iv));
             string kpath = getKeypath(settings.fpath);
             try {
@@ -5417,7 +5438,7 @@ bool traverser(int argc, char** argv) {
     return false;
 }
 bool encryptfile(int argc, char** argv) {
-    return traverser(argc,argv);
+    return traverser(argc, argv);
 }
 bool encryptfolder(int argc, char** argv) {
     return traverser(argc, argv);

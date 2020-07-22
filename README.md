@@ -1,6 +1,7 @@
-<h1><Zenc - command line file encrypter / decryptor</h1>
-       <br>
+<h1>Zenc - command line file encrypter / decryptor</h1>
+       
 A command line cross platform File/Folder encryptor written in c++ and based on Crypto++ library <br>
+<a href = "https://joelkundu.github.io/Zenc/"> Visit the site </a><br>
 
 <h2>How to use?</h2>  
 <h3>Windows</h3>
@@ -84,5 +85,5 @@ Zenc [-h or -H/-e/-ed/-d/-dd] [FILE PATH] -m [mode] [-p/-np] [Password in case o
               Zenc -dd C:\test\ -m gcm2k -p C:\test\test.zkey -t (decrypt with a keyfile)
        
 NOTE: change Zenc according to your environment.       
-<a href = "https://joelkundu.github.io/Zenc/"> Visit the site </a><br>
+
 

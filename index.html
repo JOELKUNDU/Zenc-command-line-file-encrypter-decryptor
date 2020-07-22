@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <title>Zenc by JOELKUNDU</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>Zenc</h1>
+        <h2>A File/Folder encryptor written in c++ and based on Crypto++ library </h2>
+
+        <section id="downloads">
+          <a href="https://github.com/JOELKUNDU/Zenc/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/JOELKUNDU/Zenc/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/JOELKUNDU/Zenc" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1>
+<a id="zenc---command-line-file-encrypter--decryptor" class="anchor" href="#zenc---command-line-file-encrypter--decryptor" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Zenc - command line file encrypter / decryptor</h1>
+<p>A command-line cross-platform File/Folder encryptor written in c++ and based on Crypto++ library</p>
+<h2>
+<a id="how-to-use" class="anchor" href="#how-to-use" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to use?</h2>
+<h3>
+<a id="windows" class="anchor" href="#windows" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Windows</h3>
+<ul>
+<li>Have g++ and libcrypto++(crypto++) preinstalled and configured</li>
+<li>Run Make.bat</li>
+<li>Else (if you are having issues with g++ and libcrypto++)</li>
+<li>Run make_path.bat, this will create a directory c:\Zenc and add it to PATH</li>
+<li>Copy Zenc.exe from release folder to c:\Zenc and use it.</li>
+</ul>
+<h3>
+<a id="linux" class="anchor" href="#linux" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Linux</h3>
+<p>Clone the repository and open a terminal in the root and use:</p>
+<p><code> sudo apt-get install g++</code></p>
+<p><code>sudo apt-get install libcryptopp++</code></p>
+<p><code>g++ src/Zenc.cpp -std=c++17 -lstdc++fs -lcrypto++ -o /usr/bin/Zenc</code></p>
+<h2>
+<a id="encryption-modes-supported" class="anchor" href="#encryption-modes-supported" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Encryption modes supported:</h2>
+<ol>
+<li>AES-GCM with 2k tables</li>
+<li>AES-GCM with 64k tables</li>
+<li>AES-EAX</li>
+<li>AES-CBC</li>
+<li>AES-ECB</li>
+<li>AES-CTR</li>
+<li>AES-CFB</li>
+<li>AES-OFB
+(more methods will be added soon)</li>
+</ol>
+<h2>
+<a id="how-to-use-1" class="anchor" href="#how-to-use-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to use</h2>
+<p>Zenc [-h or -H/-e/-ed/-d/-dd] [FILE PATH] -m [mode] [-p/-np] [Password in case of using -p] [-t -g]
+-h or -H   Help Menu
+-e    Encrypt a file
+-ed   Encrypt a directory
+-d    Decrypt a file
+-dd   Decrypt a directory
+-m    Mode of Encryption / Decryption (gcm2k,gcm64k,eax,cbc,ecb,ctr,cfb,ofb)
+-p    Password provided by the user (no limit in length or characters)
+-np   Either a .zkey file is created or if -g is mentioned then a password is created
+-t    Will encrypt/decrypt the titles and the extention
+-g    Will generate a password of the length specified by the user</p>
+<h2>
+<a id="note" class="anchor" href="#note" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>NOTE:</h2>
+<ol>
+<li>To delete files run it on an elevated terminal else Permission Denied error will occur.</li>
+<li>Time taken to do the operation will be displayed in microseconds in the end.</li>
+</ol>
+<h2>
+<a id="example-commands" class="anchor" href="#example-commands" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>EXAMPLE COMMANDS:</h2>
+<ol>
+<li>
+<p>To open the help book:
+(on Windows)</p>
+<pre><code>`Zenc -h`
+
+`Zenc -H`
+
+`Zenc`
+</code></pre>
+</li>
+<li>
+<p>To Encrypt a file:
+(on Windows)</p>
+<pre><code>`Zenc -e C:\test\test.txt -m gcm2k -p Password123 -t (encrypt with a passwprd)     `
+
+`Zenc -e C:\test\test.txt -m gcm2k -p C:\test\test.zkey -t (encrypt with a keyfile)   `
+
+`Zenc -e C:\test\test.txt -m gcm2k -np -t (generate a keyfile)`
+
+`Zenc -e C:\test\test.txt -m gcm2k -np -t -g (generate a password)`
+</code></pre>
+</li>
+<li>
+<p>To Encrypt a Directory :
+(on Windows)</p>
+<pre><code>`Zenc -ed C:\test\ -m gcm2k -p Password123 - t (encrypt with a passwprd)`
+
+`Zenc -ed C:\test\ -m gcm2k -p C:\test\test.zkey -t (encrypt with a keyfile)`
+
+`Zenc -ed C:\test\ -m gcm2k -np -t (generate a keyfile)`
+
+`Zenc -ed C:\test\ -m gcm2k -np -t -g (generate a password)`
+</code></pre>
+</li>
+<li>
+<p>To Decrypt a file:
+(on Windows)</p>
+<pre><code>`Zenc -d C:\test\test.txt -m gcm2k -p Password123 -t (decrypt with a passwprd)`
+
+`Zenc -d C:\test\test.txt -m gcm2k -p C:\test\test.zkey -t (decrypt with a keyfile)`
+</code></pre>
+</li>
+<li>
+<p>To Decrypt a Directory :
+(on Windows)</p>
+<pre><code>`Zenc -dd C:\test\ -m gcm2k -p Password123 -t (decrypt with a passwprd)`
+
+`Zenc -dd C:\test\ -m gcm2k -p C:\test\test.zkey -t (decrypt with a keyfile)`
+</code></pre>
+</li>
+</ol>
+<p>NOTE: change Zenc according to your environment.</p>
+      </section>
+    </div>
+
+    
+  </body>
+</html>

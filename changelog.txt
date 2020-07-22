@@ -1,3 +1,13 @@
+22/07/2020 -  Fixed error in making keyfiles
+              Now keyfiles saved in c:\Zenc\Keys dir (on windows)
+                                 in /home/user/Zenc/Keys (on linux)
+              Features Still to be added:
+                1. User defined output paths
+                2. AES-CCM
+              Bugs (Will be fixed soon):
+                It tries to re-encrypt already encrypted files. (just continue when the prompt comes)
+                Same with decrypting i.e will try to decrypt already decrypted files
+                Will not delete orignal files on Windows
 21/07/2020 -  Added following modes:
               AES-ECB
               AES-CTR

@@ -6,7 +6,7 @@ A command line cross platform File/Folder encryptor written in c++ and based on 
 -have g++ and libcrypto++(crypto++) preinstalled and configured<br>
 -Run Make.bat<br>
 else (if you are having issues with g++ and libcrypto++)<br>
--run Make_path.bat, this will create a directory c:\Zenc <br>
+-run make_path.bat, this will create a directory c:\Zenc <br>
 -Copy exe from release folder to c:\Zenc and use it.<br>
 
 <h3>Linux</h3>

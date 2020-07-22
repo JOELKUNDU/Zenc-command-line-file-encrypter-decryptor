@@ -1,11 +1,22 @@
 <h1>Zenc - command line file encrypter / decryptor</h1>
 A command line cross platform File/Folder encryptor written in c++ and based on Crypto++ library 
 
-<h2>How to use?</h2>        
-       - Take the source file from the src file and paste it in an IDE.<br>
-       - Make sure u set the c++ standard to stdc++17 and have cryptopp installed<Br>
-       - compile and use the output. (refer bellow for exampple commands)<br>
-       - If you change the output name from Zenc then replace Zenc from the commands given bellow with your output name.<br>
+<h2>How to use?</h2>  
+<h3>Windows</h3>
+- Take the source file from the src file and paste it in an IDE.<br>
+- Make sure u set the c++ standard to stdc++17 and have cryptopp installed<Br>
+- compile and use the output. (refer bellow for exampple commands)<br>
+- If you change the output name from Zenc then replace Zenc from the commands given bellow with your output name.<br>
+
+<h3>Linux</h3>
+Clone the repository and open a terminal in the root and use:
+
+       '''
+       sudo apt-get install g++
+       sudo apt-get install libcryptopp++
+       g++ src/Zenc.cpp -std=c++17 -lstdc++fs -lcrypto++ -o /usr/bin/Zenc
+       '''
+
 
 <h2>Encryption modes supported:</h2>
 1.  AES-GCM with 2k tables<br>

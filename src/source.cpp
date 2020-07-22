@@ -397,8 +397,8 @@ private:
     }
     void loadKeyFromFile() {
         try {
-            CryptoPP::byte key[AES::DEFAULT_KEYLENGTH];
-            CryptoPP::byte iv[AES::BLOCKSIZE];
+            unsigned char key[AES::DEFAULT_KEYLENGTH];
+            unsigned char iv[AES::BLOCKSIZE];
             fstream rk(settings.kpathPass, ios::in | ios::binary);
             rk.read((char*)key, sizeof(key));
             rk.read((char*)iv, sizeof(iv));
@@ -429,9 +429,9 @@ private:
     void genKeyFile() {
         try {
             AutoSeededRandomPool prng;
-            CryptoPP::byte key[AES::DEFAULT_KEYLENGTH];
+            unsigned char key[AES::DEFAULT_KEYLENGTH];
             prng.GenerateBlock(key, sizeof(key));
-            CryptoPP::byte iv[AES::BLOCKSIZE];
+            unsigned char iv[AES::BLOCKSIZE];
             prng.GenerateBlock(iv, sizeof(iv));
             string kpath = getKeypath(settings.fpath);
             try {
@@ -1014,8 +1014,8 @@ private:
     }
     void loadKeyFromFile() {
         try {
-            CryptoPP::byte key[AES::DEFAULT_KEYLENGTH];
-            CryptoPP::byte iv[AES::BLOCKSIZE];
+            unsigned char key[AES::DEFAULT_KEYLENGTH];
+            unsigned char iv[AES::BLOCKSIZE];
             fstream rk(settings.kpathPass, ios::in | ios::binary);
             rk.read((char*)key, sizeof(key));
             rk.read((char*)iv, sizeof(iv));
@@ -1046,9 +1046,9 @@ private:
     void genKeyFile() {
         try {
             AutoSeededRandomPool prng;
-            CryptoPP::byte key[AES::DEFAULT_KEYLENGTH];
+            unsigned char key[AES::DEFAULT_KEYLENGTH];
             prng.GenerateBlock(key, sizeof(key));
-            CryptoPP::byte iv[AES::BLOCKSIZE];
+            unsigned char iv[AES::BLOCKSIZE];
             prng.GenerateBlock(iv, sizeof(iv));
             string kpath = getKeypath(settings.fpath);
             try {
@@ -1630,8 +1630,8 @@ private:
     }
     void loadKeyFromFile() {
         try {
-            CryptoPP::byte key[AES::DEFAULT_KEYLENGTH];
-            CryptoPP::byte iv[AES::BLOCKSIZE*16];
+            unsigned char key[AES::DEFAULT_KEYLENGTH];
+            unsigned char iv[AES::BLOCKSIZE*16];
             fstream rk(settings.kpathPass, ios::in | ios::binary);
             rk.read((char*)key, sizeof(key));
             rk.read((char*)iv, sizeof(iv));
@@ -1662,9 +1662,9 @@ private:
     void genKeyFile() {
         try {
             AutoSeededRandomPool prng;
-            CryptoPP::byte key[AES::DEFAULT_KEYLENGTH];
+            unsigned char key[AES::DEFAULT_KEYLENGTH];
             prng.GenerateBlock(key, sizeof(key));
-            CryptoPP::byte iv[AES::BLOCKSIZE*16];
+            unsigned char iv[AES::BLOCKSIZE*16];
             prng.GenerateBlock(iv, sizeof(iv));
             string kpath = getKeypath(settings.fpath);
             try {
@@ -2246,8 +2246,8 @@ private:
     }
     void loadKeyFromFile() {
         try {
-            CryptoPP::byte key[AES::DEFAULT_KEYLENGTH];
-            CryptoPP::byte iv[AES::BLOCKSIZE];
+            unsigned char key[AES::DEFAULT_KEYLENGTH];
+            unsigned char iv[AES::BLOCKSIZE];
             fstream rk(settings.kpathPass, ios::in | ios::binary);
             rk.read((char*)key, sizeof(key));
             rk.read((char*)iv, sizeof(iv));
@@ -2278,9 +2278,9 @@ private:
     void genKeyFile() {
         try {
             AutoSeededRandomPool prng;
-            CryptoPP::byte key[AES::DEFAULT_KEYLENGTH];
+            unsigned char key[AES::DEFAULT_KEYLENGTH];
             prng.GenerateBlock(key, sizeof(key));
-            CryptoPP::byte iv[AES::BLOCKSIZE];
+            unsigned char iv[AES::BLOCKSIZE];
             prng.GenerateBlock(iv, sizeof(iv));
             string kpath = getKeypath(settings.fpath);
             try {
@@ -2862,8 +2862,8 @@ private:
     }
     void loadKeyFromFile() {
         try {
-            CryptoPP::byte key[AES::DEFAULT_KEYLENGTH];
-            CryptoPP::byte iv[AES::BLOCKSIZE];
+            unsigned char key[AES::DEFAULT_KEYLENGTH];
+            unsigned char iv[AES::BLOCKSIZE];
             fstream rk(settings.kpathPass, ios::in | ios::binary);
             rk.read((char*)key, sizeof(key));
             rk.read((char*)iv, sizeof(iv));
@@ -2894,9 +2894,9 @@ private:
     void genKeyFile() {
         try {
             AutoSeededRandomPool prng;
-            CryptoPP::byte key[AES::DEFAULT_KEYLENGTH];
+            unsigned char key[AES::DEFAULT_KEYLENGTH];
             prng.GenerateBlock(key, sizeof(key));
-            CryptoPP::byte iv[AES::BLOCKSIZE];
+            unsigned char iv[AES::BLOCKSIZE];
             prng.GenerateBlock(iv, sizeof(iv));
             string kpath = getKeypath(settings.fpath);
             try {
@@ -3478,8 +3478,8 @@ private:
     }
     void loadKeyFromFile() {
         try {
-            CryptoPP::byte key[AES::DEFAULT_KEYLENGTH];
-            CryptoPP::byte iv[AES::BLOCKSIZE];
+            unsigned char key[AES::DEFAULT_KEYLENGTH];
+            unsigned char iv[AES::BLOCKSIZE];
             fstream rk(settings.kpathPass, ios::in | ios::binary);
             rk.read((char*)key, sizeof(key));
             rk.read((char*)iv, sizeof(iv));
@@ -3510,9 +3510,9 @@ private:
     void genKeyFile() {
         try {
             AutoSeededRandomPool prng;
-            CryptoPP::byte key[AES::DEFAULT_KEYLENGTH];
+            unsigned char key[AES::DEFAULT_KEYLENGTH];
             prng.GenerateBlock(key, sizeof(key));
-            CryptoPP::byte iv[AES::BLOCKSIZE];
+            unsigned char iv[AES::BLOCKSIZE];
             prng.GenerateBlock(iv, sizeof(iv));
             string kpath = getKeypath(settings.fpath);
             try {
@@ -4094,8 +4094,8 @@ private:
     }
     void loadKeyFromFile() {
         try {
-            CryptoPP::byte key[AES::DEFAULT_KEYLENGTH];
-            CryptoPP::byte iv[AES::BLOCKSIZE];
+            unsigned char key[AES::DEFAULT_KEYLENGTH];
+            unsigned char iv[AES::BLOCKSIZE];
             fstream rk(settings.kpathPass, ios::in | ios::binary);
             rk.read((char*)key, sizeof(key));
             rk.read((char*)iv, sizeof(iv));
@@ -4126,9 +4126,9 @@ private:
     void genKeyFile() {
         try {
             AutoSeededRandomPool prng;
-            CryptoPP::byte key[AES::DEFAULT_KEYLENGTH];
+            unsigned char key[AES::DEFAULT_KEYLENGTH];
             prng.GenerateBlock(key, sizeof(key));
-            CryptoPP::byte iv[AES::BLOCKSIZE];
+            unsigned char iv[AES::BLOCKSIZE];
             prng.GenerateBlock(iv, sizeof(iv));
             string kpath = getKeypath(settings.fpath);
             try {
@@ -4710,8 +4710,8 @@ private:
     }
     void loadKeyFromFile() {
         try {
-            CryptoPP::byte key[AES::DEFAULT_KEYLENGTH];
-            CryptoPP::byte iv[AES::BLOCKSIZE];
+            unsigned char key[AES::DEFAULT_KEYLENGTH];
+            unsigned char iv[AES::BLOCKSIZE];
             fstream rk(settings.kpathPass, ios::in | ios::binary);
             rk.read((char*)key, sizeof(key));
             rk.read((char*)iv, sizeof(iv));
@@ -4742,9 +4742,9 @@ private:
     void genKeyFile() {
         try {
             AutoSeededRandomPool prng;
-            CryptoPP::byte key[AES::DEFAULT_KEYLENGTH];
+            unsigned char key[AES::DEFAULT_KEYLENGTH];
             prng.GenerateBlock(key, sizeof(key));
-            CryptoPP::byte iv[AES::BLOCKSIZE];
+            unsigned char iv[AES::BLOCKSIZE];
             prng.GenerateBlock(iv, sizeof(iv));
             string kpath = getKeypath(settings.fpath);
             try {

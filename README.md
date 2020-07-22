@@ -3,10 +3,11 @@ A command line cross platform File/Folder encryptor written in c++ and based on 
 
 <h2>How to use?</h2>  
 <h3>Windows</h3>
-- Take the source file from the src file and paste it in an IDE.<br>
-- Make sure u set the c++ standard to stdc++17 and have cryptopp installed<Br>
-- compile and use the output. (refer bellow for exampple commands)<br>
-- If you change the output name from Zenc then replace Zenc from the commands given bellow with your output name.<br>
+-have g++ and libcrypto++(crypto++) preinstalled and configured
+-Run Make.bat
+else (if you are having issues with g++ and libcrypto++)
+-run Make_path.bat, this will create a directory c:\Zenc 
+-Copy exe from release folder to c:\Zenc and use it.
 
 <h3>Linux</h3>
 Clone the repository and open a terminal in the root and use:

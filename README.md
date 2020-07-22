@@ -11,13 +11,10 @@ A command line cross platform File/Folder encryptor written in c++ and based on 
 <h3>Linux</h3>
 Clone the repository and open a terminal in the root and use:
 
-       '''
        sudo apt-get install g++
        sudo apt-get install libcryptopp++
        g++ src/Zenc.cpp -std=c++17 -lstdc++fs -lcrypto++ -o /usr/bin/Zenc
-       '''
-
-
+ 
 <h2>Encryption modes supported:</h2>
 1.  AES-GCM with 2k tables<br>
 2.  AES-GCM with 64k tables<br>

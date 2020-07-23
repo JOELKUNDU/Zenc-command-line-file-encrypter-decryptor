@@ -49,15 +49,13 @@ Zenc [-h or -H/-e/-ed/-d/-dd] [FILE PATH] -m [mode] [-p/-np] [Password in case o
 
 <h3>EXAMPLE COMMANDS:</h3>
 
-       1. To open the help book: 
-              (on Windows)
+       1. To open the help book:
 
               Zenc -h
               Zenc -H
               Zenc
 
        2. To Encrypt a file: 
-              (on Windows)
 
               Zenc -e C:\test\test.txt -m gcm2k -p Password123 -t (encrypt with a passwprd)     
               Zenc -e C:\test\test.txt -m gcm2k -p C:\test\test.zkey -t (encrypt with a keyfile)   
@@ -65,7 +63,6 @@ Zenc [-h or -H/-e/-ed/-d/-dd] [FILE PATH] -m [mode] [-p/-np] [Password in case o
               Zenc -e C:\test\test.txt -m gcm2k -np -t -g (generate a password)
 
        3. To Encrypt a Directory : 
-           (on Windows) 
 
               Zenc -ed C:\test\ -m gcm2k -p Password123 - t (encrypt with a passwprd)
               Zenc -ed C:\test\ -m gcm2k -p C:\test\test.zkey -t (encrypt with a keyfile)
@@ -73,13 +70,11 @@ Zenc [-h or -H/-e/-ed/-d/-dd] [FILE PATH] -m [mode] [-p/-np] [Password in case o
               Zenc -ed C:\test\ -m gcm2k -np -t -g (generate a password)
 
        4. To Decrypt a file: 
-           (on Windows) 
 
               Zenc -d C:\test\test.txt -m gcm2k -p Password123 -t (decrypt with a passwprd)
               Zenc -d C:\test\test.txt -m gcm2k -p C:\test\test.zkey -t (decrypt with a keyfile)
 
        5. To Decrypt a Directory : 
-           (on Windows) 
 
               Zenc -dd C:\test\ -m gcm2k -p Password123 -t (decrypt with a passwprd)
               Zenc -dd C:\test\ -m gcm2k -p C:\test\test.zkey -t (decrypt with a keyfile)

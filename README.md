@@ -3,6 +3,8 @@
 A command line cross platform File/Folder encryptor written in c++ and based on Crypto++ library <br>
 <a href = "https://joelkundu.github.io/Zenc/"> Visit the site </a><br>
 
+Checkout CONTRIBUTING.md to see the contributing guidelines.
+
 <h2>How to use?</h2>  
 <h3>Windows</h3>
 -have g++ and libcrypto++(crypto++) preinstalled and configured<br>

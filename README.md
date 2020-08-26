@@ -29,7 +29,8 @@ Clone the repository and open a terminal in the root and use:
 6.  AES-CTR<br>       
 7.  AES-CFB<br>
 8.  AES-OFB<br>
-(more methods will be added soon)<br>
+9.  ChaCha20 (stream cipher)<br>
+10. XChaCha20 (stream cipher)<br>
 
 <h2> How to use </h2>
 Zenc [-h or -H/-e/-ed/-d/-dd] [FILE PATH] -m [mode] [-p/-np] [Password in case of using -p] [-t -g]<br>

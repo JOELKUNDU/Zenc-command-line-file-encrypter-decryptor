@@ -20,7 +20,7 @@ Clone the repository and open a terminal in the root and use:
        sudo apt-get install libcryptopp++
        g++ src/Zenc.cpp -std=c++17 -lstdc++fs -lcrypto++ -o /usr/bin/Zenc
  
-optionally upx the executable (slight boost in performance)
+NOTE: optional - upx the executable (-9 --lzma) (slight boost in performance) 
 <h2>Encryption modes supported:</h2>
 1.  AES-GCM with 2k tables<br>
 2.  AES-GCM with 64k tables<br>

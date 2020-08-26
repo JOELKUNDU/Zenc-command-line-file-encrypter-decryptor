@@ -1,9 +1,8 @@
+26/08/2020 -  Added Stream Ciphers (ChaCha20 & XChaCha20)
+              Note: TO DELETE ORIGNAL FILES IN WINDOWS-Use with a command prompt having admin privileges.
 22/07/2020 -  Fixed error in making keyfiles
               Now keyfiles saved in c:\Zenc\Keys dir (on windows)
                                  in /home/user/Zenc/Keys (on linux)
-              Features Still to be added:
-                1. User defined output paths
-                2. AES-CCM
               Bugs (Will be fixed soon):
                 It tries to re-encrypt already encrypted files. (just continue when the prompt comes)
                 Same with decrypting i.e will try to decrypt already decrypted files
